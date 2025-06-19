@@ -1,9 +1,20 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { useRouter  } from 'vue-router'
 import { User, Lock } from '@element-plus/icons-vue'
 
 const username = ref('')
 const password = ref('')
+
+const router = useRouter()
+
+const login = () => {
+  if (username.value === 'admin' && password.value === '1234') {
+    router.push('/dashboard')
+  } else {
+    alert('Invalid username or password')
+  }
+}
 </script>
 
 <style scoped>
@@ -38,7 +49,7 @@ const password = ref('')
       show-password
     />
 
-    <el-button type="primary"> Login </el-button>
+    <el-button type="primary"  @click="login"> Login </el-button>
   </div>
 
   <div class="login-forgot" >
