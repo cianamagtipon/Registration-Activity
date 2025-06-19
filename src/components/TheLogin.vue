@@ -6,19 +6,35 @@ const username = ref('')
 const password = ref('')
 </script>
 
+<style scoped>
+  .login,
+  .login input,
+  .login button {
+    display: block;
+    width: 100%;
+  }
+
+  .login-forgot {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+</style>
+
 <template>
   <div class="login">
-    <h1>This is the login page</h1>
 
     <el-input
       v-model="username"
       placeholder="Username"
+      style="margin-bottom: 16px;"
       :prefix-icon="User"
     />
     <el-input
       v-model="password"
       placeholder="Password"
       :prefix-icon="Lock"
+      style="margin-bottom: 16px;"
       show-password
     />
 
@@ -29,22 +45,3 @@ const password = ref('')
     <el-link type="info"> Forgot Password? </el-link>
   </div>
 </template>
-
-<style scoped>
-@media (min-width: 1024px) {
-  .login {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 50%;
-    gap: 16px;
-  }
-
-  .login-forgot {
-    width: 50%;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 8px;
-  }
-}
-</style>
