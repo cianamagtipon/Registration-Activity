@@ -25,7 +25,7 @@ const login = () => {
     width: 100%;
   }
 
-  .login-forgot {
+  .forgot-password {
     display: flex;
     justify-content: flex-end;
     margin-top: 8px;
@@ -52,7 +52,7 @@ const login = () => {
     <el-button type="primary"  @click="login"> Login </el-button>
   </div>
 
-  <div class="login-forgot" >
+  <div class="forgot-password" >
     <el-link type="info"> Forgot Password? </el-link>
   </div>
 </template>
