@@ -1,3 +1,9 @@
+/*BASIC DESCRIPTION: These are the main components of the login page.*/
+
+
+<!---------- SCRIPTS ---------->
+
+
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRouter  } from 'vue-router'
@@ -14,6 +20,7 @@ const login = () => {
   if (username.value === 'admin' && password.value === '1234') {
     router.push('/dashboard')
   } else {
+    ElMessage.closeAll()
     ElMessage({
       message: 'Invalid username or password',
       type: 'error'
@@ -22,21 +29,56 @@ const login = () => {
 }
 
 function forgetPassword() {
+  ElMessage.closeAll()
   forgetClickCount.value++
-
   if (forgetClickCount.value === 1) {
     ElMessage({
       message: 'Password change request sent',
-      type: 'success'
+      type: 'success',
     })
   } else {
     ElMessage({
       message:'Password change already requested',
-      type: 'warning'
+      type: 'warning',
     })
   }
 }
 </script>
+
+
+<!---------- TEMPLATES ---------->
+
+
+<template>
+  <div class="page-container">
+    <form class="login" @submit.prevent="login">
+      <el-input
+        v-model="username"
+        placeholder="Username"
+        style="margin-bottom: 16px;"
+        :prefix-icon="User"
+      />
+      <el-input
+        v-model="password"
+        placeholder="Password"
+        style="margin-bottom: 30px;"
+        :prefix-icon="Lock"
+        show-password
+      />
+      <el-button type="primary" native-type="submit">
+        Login
+      </el-button>
+    </form>
+
+    <div class="forgot-password">
+      <el-link type="info" @click="forgetPassword">Forgot Password?</el-link>
+    </div>
+  </div>
+</template>
+
+
+<!---------- STYLES ---------->
+
 
 <style scoped>
   .page-container {
@@ -62,29 +104,3 @@ function forgetPassword() {
     margin-top: 10px;
   }
 </style>
-
-<template>
-  <div class="page-container">
-    <div class="login">
-      <el-input
-        v-model="username"
-        placeholder="Username"
-        style="margin-bottom: 16px;"
-        :prefix-icon="User"
-      />
-      <el-input
-        v-model="password"
-        placeholder="Password"
-        :prefix-icon="Lock"
-        style="margin-bottom: 30px;"
-        show-password
-      />
-      <el-button type="primary" @click="login">Login</el-button>
-    </div>
-
-    <div class="forgot-password">
-      <el-link type="info" @click="forgetPassword">Forgot Password?</el-link>
-
-    </div>
-  </div>
-</template>
