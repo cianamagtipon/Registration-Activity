@@ -31,7 +31,7 @@ function forgetPassword() {
     })
   } else {
     ElMessage({
-      message: `You've already requested a password change.`,
+      message:'Password change already requested',
       type: 'warning'
     })
   }
