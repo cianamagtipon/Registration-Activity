@@ -30,17 +30,34 @@ const login = () => {
 
 function forgetPassword() {
   ElMessage.closeAll()
-  forgetClickCount.value++
-  if (forgetClickCount.value === 1) {
+
+  if (!username.value) {
     ElMessage({
-      message: 'Password change request sent',
-      type: 'success',
-    })
-  } else {
-    ElMessage({
-      message:'Password change already requested',
+      message: 'Please enter username',
       type: 'warning',
     })
+    return
+  } else if (username.value !== 'admin') {
+    ElMessage({
+      message: 'Username does not exist',
+      type: 'error',
+    })
+  }
+
+  if (username.value === 'admin') {
+    forgetClickCount.value++
+
+    if (forgetClickCount.value === 1) {
+      ElMessage({
+        message: 'Password change request sent',
+        type: 'success',
+      })
+    } else {
+      ElMessage({
+        message: 'Password change already requested',
+        type: 'warning',
+      })
+    }
   }
 }
 </script>
