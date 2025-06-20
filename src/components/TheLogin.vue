@@ -9,55 +9,59 @@ import { ref } from 'vue'
 import { useRouter  } from 'vue-router'
 import { User, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import { useUserStore } from '@/stores/user'
 
 const username = ref('')
 const password = ref('')
-const forgetClickCount = ref(0)
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const login = () => {
-  if (username.value === 'admin' && password.value === '1234') {
+  const success = userStore.login(username.value, password.value)
+
+  if (success) {
     router.push('/dashboard')
   } else {
     ElMessage.closeAll()
     ElMessage({
       message: 'Invalid username or password',
-      type: 'error'
+      type: 'error',
     })
   }
 }
 
-function forgetPassword() {
+
+const forgetPassword = () => {
+  userStore.setUsername(username.value)
+  const result = userStore.handleForgetPassword()
+
   ElMessage.closeAll()
-
-  if (!username.value) {
-    ElMessage({
-      message: 'Please enter username',
-      type: 'warning',
-    })
-    return
-  } else if (username.value !== 'admin') {
-    ElMessage({
-      message: 'Username does not exist',
-      type: 'error',
-    })
-  }
-
-  if (username.value === 'admin') {
-    forgetClickCount.value++
-
-    if (forgetClickCount.value === 1) {
+  switch (result) {
+    case 'empty':
+      ElMessage({
+        message: 'Please enter username',
+        type: 'warning'
+      })
+      break
+    case 'notFound':
+      ElMessage({
+        message: 'Username does not exist',
+        type: 'error'
+      })
+      break
+    case 'requested':
       ElMessage({
         message: 'Password change request sent',
-        type: 'success',
+        type: 'success'
       })
-    } else {
+      break
+    case 'alreadyRequested':
       ElMessage({
         message: 'Password change already requested',
-        type: 'warning',
+        type: 'warning'
       })
-    }
+      break
   }
 }
 </script>
