@@ -67,7 +67,7 @@ function forgetPassword() {
 
 
 <template>
-  <div class="page-container">
+  <div class="login-container">
     <form class="login" @submit.prevent="login">
       <el-input
         v-model="username"
@@ -98,7 +98,7 @@ function forgetPassword() {
 
 
 <style scoped>
-  .page-container {
+  .login-container {
     position: absolute;
     top: 50%;
     left: 50%;
