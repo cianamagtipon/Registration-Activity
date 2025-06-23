@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { masterlist } from '@/assets/data/masterlist'
 
 export interface Address {
@@ -22,6 +22,8 @@ export interface Student {
   course: Course
 }
 
+export type StudentRaw = Omit<Student, 'id' | 'age'>
+
 function calculateAge(birthDate: Date): number {
   const today = new Date()
   let age = today.getFullYear() - birthDate.getFullYear()
@@ -36,13 +38,15 @@ function calculateAge(birthDate: Date): number {
 export const useStudentStore = defineStore('student', () => {
   const generateId = () => Math.random().toString(36).substring(2, 9)
 
-  const students = ref<Student[]>(
-    masterlist.map((student) => ({
+  const students = ref<Student[]>([])
+
+  const fetchStudents = () => {
+    students.value = masterlist.map((student) => ({
       ...student,
       id: generateId(),
       age: calculateAge(student.birthDate),
     }))
-  )
+  }
 
   const addStudent = (student: Omit<Student, 'id' | 'age'>) => {
     students.value.push({
@@ -56,19 +60,13 @@ export const useStudentStore = defineStore('student', () => {
     students.value = students.value.filter((student) => student.id !== id)
   }
 
-  const resetStudents = () => {
-    students.value = masterlist.map((student) => ({
-      ...student,
-      id: generateId(),
-      age: calculateAge(student.birthDate),
-    }))
-  }
+  const resetStudents = fetchStudents
 
   return {
     students,
     addStudent,
     removeStudent,
+    fetchStudents,
     resetStudents,
   }
 })
-

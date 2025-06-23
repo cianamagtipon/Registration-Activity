@@ -7,20 +7,38 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { useStudentStore } from '@/stores/student'
-import { storeToRefs } from 'pinia'
 
 const studentStore = useStudentStore()
-const { students } = storeToRefs(studentStore)
 
 const tableData = ref([])
+const addStudentRef = ref()
 
 onMounted(() => {
+  studentStore.fetchStudents()
   tableData.value = [...studentStore.students]
 })
 
-const deleteRow = studentStore.removeStudent
-const onAddItem = studentStore.addStudent
+const deleteRow = (id) => {
+  studentStore.removeStudent(id)
+  tableData.value = [...studentStore.students]
+}
 
+// const onAddItem = () => {
+//   const newStudent = {
+//     firstName: 'New',
+//     lastName: 'Student',
+//     birthDate: new Date('2002-01-01'),
+//     course: 'BSCS',
+//     address: {
+//       street: 'Test St',
+//       city: 'Sample',
+//       province: 'Province',
+//       zipCode: 1000,
+//     },
+//   }
+//   studentStore.addStudent(newStudent)
+//   tableData.value = [...studentStore.students]
+// }
 </script>
 
 
@@ -29,7 +47,7 @@ const onAddItem = studentStore.addStudent
 
 <template>
   <div class="table-container">
-    <el-table :data="students" class="student-table">
+    <el-table :data="tableData" max-height="500px" class="student-table">
       <el-table-column
         prop="lastName"
         label="Last Name"
@@ -50,6 +68,10 @@ const onAddItem = studentStore.addStudent
           {{ new Date(scope.row.birthDate).toLocaleDateString() }}
         </template>
       </el-table-column>
+      <el-table-column
+        prop="age"
+        label="Age"
+        width="150" />
       <el-table-column
         prop="address"
         label="Address"
@@ -88,8 +110,8 @@ const onAddItem = studentStore.addStudent
       </el-table-column>
     </el-table>
 
-    <el-button class="add-btn" @click="onAddItem">
-      Add Item
+    <el-button class="add-button" @click="addStudentRef.openDrawer()">
+      Add Student
     </el-button>
   </div>
 </template>
@@ -106,6 +128,7 @@ const onAddItem = studentStore.addStudent
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
+    max-height: 60vh;
   }
 
 .student-table {
@@ -114,7 +137,7 @@ const onAddItem = studentStore.addStudent
   border: 1px solid #ebeef5;
 }
 
-.add-btn {
+.add-button {
   display: block;
   width: 100%;
   margin-top: 16px;
