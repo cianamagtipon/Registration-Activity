@@ -6,7 +6,7 @@ you can import the components here.*/
 
 
 <script setup>
-import TheLogin from '../components/TheLogin.vue'
+import TheLogin from '../TheLogin.vue'
 </script>
 
 

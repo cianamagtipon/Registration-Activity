@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginView from '../views/LoginView.vue'
+import LoginView from '../components/views/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,7 +11,7 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      component: () => import('../views/DashboardView.vue'),
+      component: () => import('../components/views/DashboardView.vue')
     },
   ],
 })
