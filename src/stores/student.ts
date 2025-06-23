@@ -33,7 +33,6 @@ function calculateAge(birthDate: Date): number {
 }
 
 export const useStudentStore = defineStore('student', () => {
-  // compute age when initializing.
   const students = ref<Student[]>(
     masterlist.map((student) => ({
       ...student,
@@ -41,7 +40,6 @@ export const useStudentStore = defineStore('student', () => {
     }))
   )
 
-  // compute age when adding student (if form only gives birthDate)
   const addStudent = (student: Omit<Student, 'age'>) => {
     students.value.push({
       ...student,
@@ -49,7 +47,6 @@ export const useStudentStore = defineStore('student', () => {
     })
   }
 
-  // compute age when resetting
   const resetStudents = () => {
     students.value = masterlist.map((student) => ({
       ...student,
