@@ -28,16 +28,20 @@ const onAddItem = studentStore.addStudent
 
 
 <template>
+  <div class="table-container">
     <el-table :data="students" class="student-table">
       <el-table-column
         prop="lastName"
-        label="Last Name" />
+        label="Last Name"
+        width="150" />
       <el-table-column
         prop="firstName"
-        label="First Name" />
+        label="First Name"
+        width="150" />
       <el-table-column
         prop="middleInitial"
-        label="Middle Initial" />
+        label="Middle Initial"
+        width="150" />
       <el-table-column
         prop="birthDate"
         label="Birth Date"
@@ -84,13 +88,10 @@ const onAddItem = studentStore.addStudent
       </el-table-column>
     </el-table>
 
-    <el-button
-      class="mt-4"
-      style="width: 100%"
-      @click="onAddItem"
-    >
+    <el-button class="add-btn" @click="onAddItem">
       Add Item
     </el-button>
+  </div>
 </template>
 
 
@@ -99,28 +100,24 @@ const onAddItem = studentStore.addStudent
 
 
 <style scoped>
-.el-col {
-  border-radius: 4px;
-}
-
-.el-button {
-  margin: 12px;
-}
-
 .table-container {
-  font-size: x-large;
-  color: white;
-}
-
-.table-scroll-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+  }
 
 .student-table {
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #ebeef5;
+}
+
+.add-btn {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
 }
 </style>
 
