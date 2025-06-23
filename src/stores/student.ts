@@ -12,6 +12,7 @@ export interface Address {
 export type Course = 'BSCS' | 'BSIT' | 'BST' | 'BSHRM' | 'BSN'
 
 export interface Student {
+  id: string
   firstName: string
   middleInitial?: string
   lastName: string
@@ -33,23 +34,32 @@ function calculateAge(birthDate: Date): number {
 }
 
 export const useStudentStore = defineStore('student', () => {
+  const generateId = () => Math.random().toString(36).substring(2, 9)
+
   const students = ref<Student[]>(
     masterlist.map((student) => ({
       ...student,
+      id: generateId(),
       age: calculateAge(student.birthDate),
     }))
   )
 
-  const addStudent = (student: Omit<Student, 'age'>) => {
+  const addStudent = (student: Omit<Student, 'id' | 'age'>) => {
     students.value.push({
       ...student,
+      id: generateId(),
       age: calculateAge(student.birthDate),
     })
+  }
+
+  const removeStudent = (id: string) => {
+    students.value = students.value.filter((student) => student.id !== id)
   }
 
   const resetStudents = () => {
     students.value = masterlist.map((student) => ({
       ...student,
+      id: generateId(),
       age: calculateAge(student.birthDate),
     }))
   }
@@ -57,6 +67,8 @@ export const useStudentStore = defineStore('student', () => {
   return {
     students,
     addStudent,
+    removeStudent,
     resetStudents,
   }
 })
+

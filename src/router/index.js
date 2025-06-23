@@ -13,6 +13,10 @@ const router = createRouter({
       path: '/dashboard',
       component: () => import('../components/views/DashboardView.vue')
     },
+    {
+      path: '/masterlist',
+      component: () => import('../components/views/MasterlistView.vue')
+    },
   ],
 })
 

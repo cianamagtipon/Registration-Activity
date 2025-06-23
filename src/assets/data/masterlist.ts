@@ -1,6 +1,6 @@
-import type { Student } from '@/stores/student'
+import type { StudentRaw } from '@/stores/student'
 
-export const masterlist: readonly Omit<Student, 'age'>[] = [
+export const masterlist: readonly StudentRaw[] = [
   {
     firstName: 'Ana',
     middleInitial: 'D',
