@@ -39,7 +39,7 @@ const handleStudentAdded = (rawForm) => {
   studentStore.addStudent(studentRaw)
   tableData.value = [...studentStore.students]
   ElMessage.closeAll()
-  ElMessage.success('Student added!')
+  ElMessage.success('Student added')
 }
 
 
@@ -47,7 +47,7 @@ const deleteRow = (id) => {
   studentStore.removeStudent(id)
   tableData.value = [...studentStore.students]
   ElMessage.closeAll()
-  ElMessage.success('Student removed.')
+  ElMessage.success('Student removed')
 }
 </script>
 
@@ -57,7 +57,7 @@ const deleteRow = (id) => {
 
 <template>
   <div class="table-container">
-    <el-table :data="tableData" max-height="500px" class="student-table">
+    <el-table :data="tableData" max-height="410px" class="student-table">
       <el-table-column
         prop="lastName"
         label="Last Name"

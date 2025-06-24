@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { masterlist } from '@/assets/data/masterlist'
+import { useAge } from '@/composables/useAge'
+
+const { calculateAge } = useAge()
 
 export interface Address {
   street: string
@@ -24,31 +27,23 @@ export interface Student {
 
 export type StudentRaw = Omit<Student, 'id' | 'age'>
 
-function calculateAge(birthDate: Date): number {
-  const today = new Date()
-  let age = today.getFullYear() - birthDate.getFullYear()
-  const m = today.getMonth() - birthDate.getMonth()
-
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--
-  }
-  return age
-}
-
 export const useStudentStore = defineStore('student', () => {
   const generateId = () => Math.random().toString(36).substring(2, 9)
 
   const students = ref<Student[]>([])
+  let initialized = false
 
   const fetchStudents = () => {
+    if (initialized) return
     students.value = masterlist.map((student) => ({
       ...student,
       id: generateId(),
       age: calculateAge(student.birthDate),
     }))
+    initialized = true
   }
 
-  const addStudent = (student: Omit<Student, 'id' | 'age'>) => {
+  const addStudent = (student: StudentRaw) => {
     students.value.push({
       ...student,
       id: generateId(),
@@ -60,12 +55,29 @@ export const useStudentStore = defineStore('student', () => {
     students.value = students.value.filter((student) => student.id !== id)
   }
 
-  const resetStudents = fetchStudents
+  const updateStudent = (updated: Student) => {
+    const index = students.value.findIndex(s => s.id === updated.id)
+    if (index !== -1) {
+      students.value[index] = {
+        ...updated,
+        age: calculateAge(updated.birthDate),
+      }
+    }
+  }
+
+  const resetStudents = () => {
+    students.value = masterlist.map((student) => ({
+      ...student,
+      id: generateId(),
+      age: calculateAge(student.birthDate),
+    }))
+  }
 
   return {
     students,
     addStudent,
     removeStudent,
+    updateStudent,
     fetchStudents,
     resetStudents,
   }

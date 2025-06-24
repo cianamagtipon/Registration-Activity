@@ -1,4 +1,4 @@
-/*BASIC DESCRIPTION: Form for editing student information.
+/*BASIC DESCRIPTION: Form for editing student data.
 One of the children of TheMasterlist.vue.*/
 
 
@@ -13,6 +13,7 @@ import { useStudentStore } from '@/stores/student'
 
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
+const studentStore = useStudentStore()
 
 const emit = defineEmits<{
   (e: 'student-added', form: StudentForm): void
@@ -28,7 +29,7 @@ interface StudentForm {
     street: string
     city: string
     province: string
-    zipCode?: string
+    zipCode: string
   }
 }
 
@@ -55,11 +56,10 @@ const rules = {
   'address.city': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.province': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.zipCode': [
+    { required: true, message: 'Required', trigger: 'blur' },
     { type: 'number', message: 'Must be numeric', trigger: 'blur' }
   ],
 }
-
-const studentStore = useStudentStore()
 
 const openDrawer = () => {
   visible.value = true
@@ -91,7 +91,6 @@ const submitForm = async () => {
 
   if (valid) {
     emit('student-added', { ...form })
-    ElMessage.success('Student form submitted!')
     closeDrawer()
   } else {
     ElMessage.error('Please fill all required fields.')

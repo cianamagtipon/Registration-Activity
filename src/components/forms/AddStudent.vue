@@ -6,10 +6,12 @@ One of the children of TheMasterlist.vue.*/
 
 
 <script lang="ts" setup>
-import { ref, reactive, defineExpose } from 'vue'
+import { ref, reactive, defineExpose, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
-import { useStudentStore } from '@/stores/student'
+import { useAge } from '@/composables/useAge'
 
+
+const { calculateAge } = useAge()
 
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
@@ -17,6 +19,10 @@ const formRef = ref<FormInstance | null>(null)
 const emit = defineEmits<{
   (e: 'student-added', form: StudentForm): void
 }>()
+
+const age = computed(() =>
+  form.birthday ? calculateAge(new Date(form.birthday)) : ''
+)
 
 interface StudentForm {
   firstName: string
@@ -28,7 +34,7 @@ interface StudentForm {
     street: string
     city: string
     province: string
-    zipCode?: string
+    zipCode: string
   }
 }
 
@@ -55,11 +61,10 @@ const rules = {
   'address.city': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.province': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.zipCode': [
+    { required: true, message: 'Required', trigger: 'blur' },
     { type: 'number', message: 'Must be numeric', trigger: 'blur' }
   ],
 }
-
-const studentStore = useStudentStore()
 
 const openDrawer = () => {
   visible.value = true
@@ -87,14 +92,12 @@ const resetForm = () => {
 const submitForm = async () => {
   if (!formRef.value) return
 
-  const valid = await formRef.value.validate()
-
-  if (valid) {
+  try {
+    await formRef.value.validate()
     emit('student-added', { ...form })
-    ElMessage.success('Student form submitted!')
     closeDrawer()
-  } else {
-    ElMessage.error('Please fill all required fields.')
+  } catch (error) {
+    ElMessage.error('Please fill all required fields')
   }
 }
 
@@ -133,6 +136,10 @@ defineExpose({ openDrawer })
           placeholder="Pick a date"
           style="width: 100%"
         />
+      </el-form-item>
+
+      <el-form-item label="Age">
+        <el-input :value="age" disabled />
       </el-form-item>
 
       <el-form-item label="Course" prop="course">
