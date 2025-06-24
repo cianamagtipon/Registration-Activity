@@ -1,4 +1,4 @@
-/*BASIC DESCRIPTION: Form for adding student.
+/*BASIC DESCRIPTION: Form for editing student information.
 One of the children of TheMasterlist.vue.*/
 
 
