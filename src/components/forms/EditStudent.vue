@@ -5,47 +5,63 @@ One of the children of TheMasterlist.vue.*/
 <!---------- SCRIPTS ---------->
 
 
-<script lang="ts" setup>
-import { ref, reactive, defineExpose } from 'vue'
+<script setup lang="ts">
+import { ref, reactive, defineExpose, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
-import { useStudentStore } from '@/stores/student'
+import { getAge } from '@/composables/getAge'
+import { dateRestriction } from '@/composables/dateRestriction'
 
+import type { Student } from '@/stores/student'
+import type { Course } from '@/stores/student'
+
+
+const { disableTooYoung } = dateRestriction()
+const { calculateAge } = getAge()
 
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
-const studentStore = useStudentStore()
 
-const emit = defineEmits<{
-  (e: 'student-added', form: StudentForm): void
-}>()
+const age = computed(() =>
+  form.birthday ? calculateAge(new Date(form.birthday)) : ''
+)
 
-interface StudentForm {
+
+interface EditStudentForm {
+  id: string
   firstName: string
   middleInitial?: string
   lastName: string
   birthday: string
-  course: string
+  course: Course
   address: {
     street: string
     city: string
     province: string
-    zipCode: string
+    zipCode: number
   }
 }
 
-const form = reactive<StudentForm>({
+
+const emit = defineEmits<{
+  (e: 'student-updated', student: Student): void
+}>()
+
+
+const form = reactive<EditStudentForm>({
+  id: '',
   firstName: '',
   middleInitial: '',
   lastName: '',
   birthday: '',
-  course: '',
+  course: '' as Course,
   address: {
     street: '',
     city: '',
     province: '',
-    zipCode: '',
-  },
+    zipCode: 0,
+  }
 })
+
 
 const rules = {
   firstName: [{ required: true, message: 'Required', trigger: 'blur' }],
@@ -55,46 +71,58 @@ const rules = {
   'address.street': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.city': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.province': [{ required: true, message: 'Required', trigger: 'blur' }],
-  'address.zipCode': [
-    { required: true, message: 'Required', trigger: 'blur' },
-    { type: 'number', message: 'Must be numeric', trigger: 'blur' }
-  ],
+  'address.zipCode': [{ required: true, message: 'Required', trigger: 'blur' }],
 }
 
-const openDrawer = () => {
+
+const openDrawer = (student: Student) => {
+  form.id = student.id
+  form.firstName = student.firstName
+  form.middleInitial = student.middleInitial
+  form.lastName = student.lastName
+  form.birthday = student.birthDate.toISOString().split('T')[0]
+  form.course = student.course
+  form.address.street = student.address.street
+  form.address.city = student.address.city
+  form.address.province = student.address.province
+  form.address.zipCode = student.address.zipCode
   visible.value = true
 }
 
-const closeDrawer = () => {
-  visible.value = false
-  resetForm()
-}
 
-const resetForm = () => {
-  form.firstName = ''
-  form.middleInitial = ''
-  form.lastName = ''
-  form.birthday = ''
-  form.course = ''
-  form.address = {
-    street: '',
-    city: '',
-    province: '',
-    zipCode: null,
-  }
+const closeDrawer = () => {
+  formRef.value?.resetFields()
+  visible.value = false
 }
 
 const submitForm = async () => {
   if (!formRef.value) return
 
-  const valid = await formRef.value.validate()
+  await formRef.value.validate((valid: boolean) => {
+    if (valid) {
+      const updatedStudent: Student = {
+        id: form.id,
+        firstName: form.firstName,
+        middleInitial: form.middleInitial,
+        lastName: form.lastName,
+        birthDate: new Date(form.birthday),
+        age: 0,
+        course: form.course,
+        address: {
+          street: form.address.street,
+          city: form.address.city,
+          province: form.address.province,
+          zipCode: Number(form.address.zipCode),
+        }
+      }
 
-  if (valid) {
-    emit('student-added', { ...form })
-    closeDrawer()
-  } else {
-    ElMessage.error('Please fill all required fields.')
-  }
+      emit('student-updated', updatedStudent)
+      ElMessage.success('Student updated!')
+      closeDrawer()
+    } else {
+      ElMessage.error('Validation failed.')
+    }
+  })
 }
 
 defineExpose({ openDrawer })
@@ -103,11 +131,10 @@ defineExpose({ openDrawer })
 
 <!---------- TEMPLATES ---------->
 
-
 <template>
   <el-drawer
     v-model="visible"
-    title="Add New Student"
+    title="Update Student Information"
     size="30%"
     :with-header="true"
     custom-class="student-drawer"
@@ -130,8 +157,13 @@ defineExpose({ openDrawer })
           v-model="form.birthday"
           type="date"
           placeholder="Pick a date"
+          :disabled-date="disableTooYoung"
           style="width: 100%"
         />
+      </el-form-item>
+
+      <el-form-item label="Age">
+        <el-input :value="age" disabled />
       </el-form-item>
 
       <el-form-item label="Course" prop="course">
@@ -171,14 +203,12 @@ defineExpose({ openDrawer })
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="submitForm">Add Student</el-button>
+        <el-button type="primary" @click="submitForm">Update Student</el-button>
         <el-button @click="closeDrawer">Cancel</el-button>
       </el-form-item>
     </el-form>
   </el-drawer>
 </template>
-
-
 
 <!---------- STYLES ---------->
 

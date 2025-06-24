@@ -8,10 +8,12 @@ One of the children of TheMasterlist.vue.*/
 <script lang="ts" setup>
 import { ref, reactive, defineExpose, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
-import { useAge } from '@/composables/useAge'
+import { dateRestriction } from '@/composables/dateRestriction'
+import { getAge } from '@/composables/getAge'
 
 
-const { calculateAge } = useAge()
+const { disableTooYoung } = dateRestriction()
+const { calculateAge } = getAge()
 
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
@@ -134,6 +136,7 @@ defineExpose({ openDrawer })
           v-model="form.birthday"
           type="date"
           placeholder="Pick a date"
+          :disabled-date="disableTooYoung"
           style="width: 100%"
         />
       </el-form-item>

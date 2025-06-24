@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { masterlist } from '@/assets/data/masterlist'
-import { useAge } from '@/composables/useAge'
+import { getAge } from '@/composables/getAge'
 
-const { calculateAge } = useAge()
+const { calculateAge } = getAge()
 
 export interface Address {
   street: string
@@ -28,18 +28,29 @@ export interface Student {
 export type StudentRaw = Omit<Student, 'id' | 'age'>
 
 export const useStudentStore = defineStore('student', () => {
-  const generateId = () => Math.random().toString(36).substring(2, 9)
+  const generateId = () => crypto.randomUUID()
 
   const students = ref<Student[]>([])
   let initialized = false
 
   const fetchStudents = () => {
     if (initialized) return
-    students.value = masterlist.map((student) => ({
-      ...student,
-      id: generateId(),
-      age: calculateAge(student.birthDate),
-    }))
+
+    const stored = localStorage.getItem('students')
+
+    if (stored) {
+      students.value = JSON.parse(stored).map((original: Student) => ({
+        ...original,
+        birthDate: new Date(original.birthDate),
+      }))
+    } else {
+      students.value = masterlist.map((student) => ({
+        ...student,
+        id: generateId(),
+        age: calculateAge(student.birthDate),
+      }))
+    }
+
     initialized = true
   }
 
@@ -56,7 +67,7 @@ export const useStudentStore = defineStore('student', () => {
   }
 
   const updateStudent = (updated: Student) => {
-    const index = students.value.findIndex(s => s.id === updated.id)
+    const index = students.value.findIndex(original => original.id === updated.id)
     if (index !== -1) {
       students.value[index] = {
         ...updated,
@@ -73,6 +84,18 @@ export const useStudentStore = defineStore('student', () => {
     }))
   }
 
+  const clearStorage = () => {
+    localStorage.removeItem('students')
+  }
+
+  watch(
+    students,
+    (newStudents) => {
+      localStorage.setItem('students', JSON.stringify(newStudents))
+    },
+    { deep: true }
+  )
+
   return {
     students,
     addStudent,
@@ -80,5 +103,6 @@ export const useStudentStore = defineStore('student', () => {
     updateStudent,
     fetchStudents,
     resetStudents,
+    clearStorage,
   }
 })
