@@ -107,6 +107,7 @@ const deleteRow = (id) => {
       <el-table-column
         prop="course"
         label="Course"
+        width="150"
         align="center" />
       <el-table-column
         fixed="right"
