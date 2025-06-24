@@ -21,7 +21,7 @@ const login = () => {
   const success = userStore.login(username.value, password.value)
 
   if (success) {
-    router.push('/dashboard')
+    router.push('/masterlist')
   } else {
     ElMessage.closeAll()
     ElMessage({

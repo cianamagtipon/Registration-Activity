@@ -38,6 +38,7 @@ const handleStudentAdded = (rawForm) => {
 
   studentStore.addStudent(studentRaw)
   tableData.value = [...studentStore.students]
+  ElMessage.closeAll()
   ElMessage.success('Student added!')
 }
 
@@ -45,6 +46,7 @@ const handleStudentAdded = (rawForm) => {
 const deleteRow = (id) => {
   studentStore.removeStudent(id)
   tableData.value = [...studentStore.students]
+  ElMessage.closeAll()
   ElMessage.success('Student removed.')
 }
 </script>

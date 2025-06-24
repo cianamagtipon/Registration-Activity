@@ -1,78 +1,10 @@
-<template>
-  <el-drawer
-    v-model="visible"
-    title="Add New Student"
-    size="30%"
-    :with-header="true"
-    custom-class="student-drawer"
-  >
-    <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
-      <el-form-item label="First Name" prop="firstName">
-        <el-input v-model="form.firstName" />
-      </el-form-item>
+/*BASIC DESCRIPTION: Child of TheMasterlist.vue.*/
 
-      <el-form-item label="Middle Initial" prop="middleInitial">
-        <el-input v-model="form.middleInitial" />
-      </el-form-item>
 
-      <el-form-item label="Last Name" prop="lastName">
-        <el-input v-model="form.lastName" />
-      </el-form-item>
+<!---------- SCRIPTS ---------->
 
-      <el-form-item label="Birthday" prop="birthday">
-        <el-date-picker
-          v-model="form.birthday"
-          type="date"
-          placeholder="Pick a date"
-          style="width: 100%"
-        />
-      </el-form-item>
 
-      <el-form-item label="Course" prop="course">
-        <el-select v-model="form.course" placeholder="Select a course">
-          <el-option
-            label=" Bachelor of Science in Computer Science"
-            value="BSCS" />
-          <el-option
-            label="Bachelor of Science in Information and Technology"
-            value="BSIT" />
-          <el-option
-            label="Bachelor of Science in Tourism"
-            value="BST" />
-          <el-option
-            label="Bachelor of Science in Hotel and Restaurant Management"
-            value="BSHRM" />
-          <el-option
-            label="Bachelor of Science in Nursing"
-            value="BSN" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="Street" prop="address.street">
-        <el-input v-model="form.address.street" />
-      </el-form-item>
-
-      <el-form-item label="City" prop="address.city">
-        <el-input v-model="form.address.city" />
-      </el-form-item>
-
-      <el-form-item label="Province" prop="address.province">
-        <el-input v-model="form.address.province" />
-      </el-form-item>
-
-      <el-form-item label="Zip Code" prop="address.zipCode">
-        <el-input v-model.number="form.address.zipCode" type="number" />
-      </el-form-item>
-
-      <el-form-item>
-        <el-button type="primary" @click="submitForm">Add Student</el-button>
-        <el-button @click="closeDrawer">Cancel</el-button>
-      </el-form-item>
-    </el-form>
-  </el-drawer>
-</template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, reactive, defineExpose } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 import { useStudentStore } from '@/stores/student'
@@ -167,6 +99,89 @@ const submitForm = async () => {
 
 defineExpose({ openDrawer })
 </script>
+
+
+<!---------- TEMPLATES ---------->
+
+
+<template>
+  <el-drawer
+    v-model="visible"
+    title="Add New Student"
+    size="30%"
+    :with-header="true"
+    custom-class="student-drawer"
+  >
+    <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
+      <el-form-item label="First Name" prop="firstName">
+        <el-input v-model="form.firstName" />
+      </el-form-item>
+
+      <el-form-item label="Middle Initial" prop="middleInitial">
+        <el-input v-model="form.middleInitial" />
+      </el-form-item>
+
+      <el-form-item label="Last Name" prop="lastName">
+        <el-input v-model="form.lastName" />
+      </el-form-item>
+
+      <el-form-item label="Birthday" prop="birthday">
+        <el-date-picker
+          v-model="form.birthday"
+          type="date"
+          placeholder="Pick a date"
+          style="width: 100%"
+        />
+      </el-form-item>
+
+      <el-form-item label="Course" prop="course">
+        <el-select v-model="form.course" placeholder="Select a course">
+          <el-option
+            label=" Bachelor of Science in Computer Science"
+            value="BSCS" />
+          <el-option
+            label="Bachelor of Science in Information and Technology"
+            value="BSIT" />
+          <el-option
+            label="Bachelor of Science in Tourism"
+            value="BST" />
+          <el-option
+            label="Bachelor of Science in Hotel and Restaurant Management"
+            value="BSHRM" />
+          <el-option
+            label="Bachelor of Science in Nursing"
+            value="BSN" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="Street" prop="address.street">
+        <el-input v-model="form.address.street" />
+      </el-form-item>
+
+      <el-form-item label="City" prop="address.city">
+        <el-input v-model="form.address.city" />
+      </el-form-item>
+
+      <el-form-item label="Province" prop="address.province">
+        <el-input v-model="form.address.province" />
+      </el-form-item>
+
+      <el-form-item label="Zip Code" prop="address.zipCode">
+        <el-input v-model.number="form.address.zipCode" type="number" />
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" @click="submitForm">Add Student</el-button>
+        <el-button @click="closeDrawer">Cancel</el-button>
+      </el-form-item>
+    </el-form>
+  </el-drawer>
+</template>
+
+
+
+<!---------- STYLES ---------->
+
 
 <style scoped>
 .student-drawer {
