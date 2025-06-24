@@ -1,4 +1,5 @@
-/*BASIC DESCRIPTION: Child of TheMasterlist.vue.*/
+/*BASIC DESCRIPTION: Form for adding student.
+One of the children of TheMasterlist.vue.*/
 
 
 <!---------- SCRIPTS ---------->
