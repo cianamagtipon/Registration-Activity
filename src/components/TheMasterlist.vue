@@ -7,6 +7,9 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { useStudentStore } from '@/stores/student'
+import { ElMessage } from 'element-plus'
+
+import AddStudent from './forms/AddStudent.vue'
 
 const studentStore = useStudentStore()
 
@@ -18,27 +21,32 @@ onMounted(() => {
   tableData.value = [...studentStore.students]
 })
 
+const handleStudentAdded = (rawForm) => {
+  const studentRaw = {
+    firstName: rawForm.firstName,
+    middleInitial: rawForm.middleInitial,
+    lastName: rawForm.lastName,
+    birthDate: new Date(rawForm.birthday),
+    course: rawForm.course,
+    address: {
+      street: rawForm.address.street,
+      city: rawForm.address.city,
+      province: rawForm.address.province,
+      zipCode: Number(rawForm.address.zipCode),
+    }
+  }
+
+  studentStore.addStudent(studentRaw)
+  tableData.value = [...studentStore.students]
+  ElMessage.success('Student added!')
+}
+
+
 const deleteRow = (id) => {
   studentStore.removeStudent(id)
   tableData.value = [...studentStore.students]
+  ElMessage.success('Student removed.')
 }
-
-// const onAddItem = () => {
-//   const newStudent = {
-//     firstName: 'New',
-//     lastName: 'Student',
-//     birthDate: new Date('2002-01-01'),
-//     course: 'BSCS',
-//     address: {
-//       street: 'Test St',
-//       city: 'Sample',
-//       province: 'Province',
-//       zipCode: 1000,
-//     },
-//   }
-//   studentStore.addStudent(newStudent)
-//   tableData.value = [...studentStore.students]
-// }
 </script>
 
 
@@ -114,6 +122,9 @@ const deleteRow = (id) => {
       Add Student
     </el-button>
   </div>
+
+  <AddStudent ref="addStudentRef" @student-added="handleStudentAdded" />
+
 </template>
 
 

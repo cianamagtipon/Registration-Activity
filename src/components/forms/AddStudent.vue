@@ -30,11 +30,21 @@
 
       <el-form-item label="Course" prop="course">
         <el-select v-model="form.course" placeholder="Select a course">
-          <el-option label="BSCS" value="BSCS" />
-          <el-option label="BSIT" value="BSIT" />
-          <el-option label="BST" value="BST" />
-          <el-option label="BSHRM" value="BSHRM" />
-          <el-option label="BSN" value="BSN" />
+          <el-option
+            label=" Bachelor of Science in Computer Science"
+            value="BSCS" />
+          <el-option
+            label="Bachelor of Science in Information and Technology"
+            value="BSIT" />
+          <el-option
+            label="Bachelor of Science in Tourism"
+            value="BST" />
+          <el-option
+            label="Bachelor of Science in Hotel and Restaurant Management"
+            value="BSHRM" />
+          <el-option
+            label="Bachelor of Science in Nursing"
+            value="BSN" />
         </el-select>
       </el-form-item>
 
@@ -51,7 +61,7 @@
       </el-form-item>
 
       <el-form-item label="Zip Code" prop="address.zipCode">
-        <el-input v-model="form.address.zipCode" />
+        <el-input v-model.number="form.address.zipCode" type="number" />
       </el-form-item>
 
       <el-form-item>
@@ -67,10 +77,29 @@ import { ref, reactive, defineExpose } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 import { useStudentStore } from '@/stores/student'
 
+
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
 
-const form = reactive({
+const emit = defineEmits<{
+  (e: 'student-added', form: StudentForm): void
+}>()
+
+interface StudentForm {
+  firstName: string
+  middleInitial?: string
+  lastName: string
+  birthday: string
+  course: string
+  address: {
+    street: string
+    city: string
+    province: string
+    zipCode?: string
+  }
+}
+
+const form = reactive<StudentForm>({
   firstName: '',
   middleInitial: '',
   lastName: '',
@@ -93,12 +122,7 @@ const rules = {
   'address.city': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.province': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.zipCode': [
-    { required: true, message: 'Required', trigger: 'blur' },
-    {
-      validator: (_, value) => /^\d+$/.test(value),
-      message: 'Zip code must be numeric',
-      trigger: 'blur',
-    },
+    { type: 'number', message: 'Must be numeric', trigger: 'blur' }
   ],
 }
 
@@ -123,7 +147,7 @@ const resetForm = () => {
     street: '',
     city: '',
     province: '',
-    zipCode: '',
+    zipCode: null,
   }
 }
 
@@ -133,20 +157,8 @@ const submitForm = async () => {
   const valid = await formRef.value.validate()
 
   if (valid) {
-    studentStore.addStudent({
-      firstName: form.firstName,
-      middleInitial: form.middleInitial,
-      lastName: form.lastName,
-      birthDate: new Date(form.birthday),
-      course: form.course as any,
-      address: {
-        street: form.address.street,
-        city: form.address.city,
-        province: form.address.province,
-        zipCode: Number(form.address.zipCode),
-      },
-    })
-    ElMessage.success('Student added successfully!')
+    emit('student-added', { ...form })
+    ElMessage.success('Student form submitted!')
     closeDrawer()
   } else {
     ElMessage.error('Please fill all required fields.')
