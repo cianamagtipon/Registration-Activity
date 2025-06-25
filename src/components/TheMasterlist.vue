@@ -5,6 +5,7 @@ page.*/
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStudentStore } from '@/stores/student'
 import { storeToRefs } from 'pinia'
 import { ElMessage } from 'element-plus'
@@ -14,6 +15,7 @@ import EditStudent from './forms/EditStudent.vue'
 
 import type { Student } from '@/stores/student'
 
+const router = useRouter()
 const studentStore = useStudentStore()
 const { students } = storeToRefs(studentStore)
 
@@ -61,12 +63,29 @@ const deleteRow = (id) => {
   ElMessage.closeAll()
   ElMessage.success('Student removed')
 }
+
+const resetData = () => {
+  studentStore.resetStudents()
+}
 </script>
 
 <!---------- TEMPLATES ---------->
 
 <template>
   <div class="table-container">
+    <el-descriptions
+      class="margin-top"
+      title="Student Masterlist"
+      :column="3"
+      border
+    >
+      <template #extra>
+        <el-button type="default" @click="router.push('/dashboard')"
+          >Return to Dashboard</el-button
+        >
+      </template>
+    </el-descriptions>
+
     <el-table :data="students" max-height="410px" class="student-table">
       <el-table-column
         prop="lastName"
@@ -136,7 +155,7 @@ const deleteRow = (id) => {
       </el-table-column>
     </el-table>
 
-    <el-button class="add-button" @click="addStudentRef.openDrawer()">
+    <el-button class="add-button" @click="addStudentRef.openForm()">
       Add Student
     </el-button>
   </div>
@@ -149,7 +168,9 @@ const deleteRow = (id) => {
 
 <style scoped>
 .table-container {
+  max-width: 1440px;
   width: 80vw;
+  margin: 0 auto;
 }
 
 .student-table {

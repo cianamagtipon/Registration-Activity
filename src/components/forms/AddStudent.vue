@@ -4,13 +4,24 @@ TheMasterlist.vue.*/
 <!---------- SCRIPTS ---------->
 
 <script lang="ts" setup>
-import { ref, reactive, defineExpose, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 import { dateRestriction } from '@/composables/dateRestriction'
+import { entryRestriction } from '@/composables/entryRestriction'
+import { nameFormatter } from '@/composables/nameFormatter'
 import { getAge } from '@/composables/getAge'
 
-const { disableTooYoung } = dateRestriction()
+const { toTitleCase, formatMiddleInitial } = nameFormatter()
+const { onlyDigits, onlyLetters } = entryRestriction()
+const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
+
+// Props to allow mode switching
+const props = defineProps<{
+  mode?: 'drawer' | 'dialog'
+}>()
+
+const mode = computed(() => props.mode ?? 'drawer')
 
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
@@ -61,17 +72,14 @@ const rules = {
   'address.province': [
     { required: true, message: 'Required', trigger: 'blur' },
   ],
-  'address.zipCode': [
-    { required: true, message: 'Required', trigger: 'blur' },
-    { type: 'number', message: 'Must be numeric', trigger: 'blur' },
-  ],
+  'address.zipCode': [{ required: true, message: 'Required', trigger: 'blur' }],
 }
 
-const openDrawer = () => {
+const openForm = () => {
   visible.value = true
 }
 
-const closeDrawer = () => {
+const closeForm = () => {
   visible.value = false
   resetForm()
 }
@@ -86,7 +94,7 @@ const resetForm = () => {
     street: '',
     city: '',
     province: '',
-    zipCode: null,
+    zipCode: '',
   }
 }
 
@@ -95,45 +103,67 @@ const submitForm = async () => {
 
   try {
     await formRef.value.validate()
-    emit('student-added', { ...form })
-    closeDrawer()
+    emit('student-added', {
+      firstName: toTitleCase(form.firstName),
+      middleInitial: form.middleInitial
+        ? formatMiddleInitial(form.middleInitial)
+        : '',
+      lastName: toTitleCase(form.lastName),
+      birthday: form.birthday,
+      course: form.course,
+      address: {
+        street: toTitleCase(form.address.street),
+        city: toTitleCase(form.address.city),
+        province: toTitleCase(form.address.province),
+        zipCode: form.address.zipCode,
+      },
+    })
+    closeForm()
   } catch (error) {
     ElMessage.error('Please fill all required fields')
   }
 }
 
-defineExpose({ openDrawer })
+defineExpose({ openForm })
 </script>
 
 <!---------- TEMPLATES ---------->
 
 <template>
-  <el-drawer
+  <component
+    :is="mode === 'drawer' ? 'el-drawer' : 'el-dialog'"
     v-model="visible"
     title="Add New Student"
-    size="30%"
+    :size="mode === 'drawer' ? '30%' : undefined"
+    :width="mode === 'dialog' ? '600px' : undefined"
     :with-header="true"
-    custom-class="student-drawer"
+    :custom-class="mode === 'drawer' ? 'student-drawer' : 'student-dialog'"
+    :destroy-on-close="true"
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
       <el-form-item label="First Name" prop="firstName">
-        <el-input v-model="form.firstName" />
+        <el-input v-model="form.firstName" @keypress="onlyLetters" />
       </el-form-item>
 
       <el-form-item label="Middle Initial" prop="middleInitial">
-        <el-input v-model="form.middleInitial" />
+        <el-input
+          v-model="form.middleInitial"
+          maxlength="1"
+          @keypress="onlyLetters"
+        />
       </el-form-item>
 
       <el-form-item label="Last Name" prop="lastName">
-        <el-input v-model="form.lastName" />
+        <el-input v-model="form.lastName" @keypress="onlyLetters" />
       </el-form-item>
 
       <el-form-item label="Birthday" prop="birthday">
         <el-date-picker
           v-model="form.birthday"
           type="date"
-          placeholder="Pick a date"
-          :disabled-date="disableTooYoung"
+          placeholder="YYYY-MM-DD"
+          :disabled-date="tooYoung"
+          :default-value="defaultDate"
           style="width: 100%"
         />
       </el-form-item>
@@ -145,7 +175,7 @@ defineExpose({ openDrawer })
       <el-form-item label="Course" prop="course">
         <el-select v-model="form.course" placeholder="Select a course">
           <el-option
-            label=" Bachelor of Science in Computer Science"
+            label="Bachelor of Science in Computer Science"
             value="BSCS"
           />
           <el-option
@@ -166,29 +196,37 @@ defineExpose({ openDrawer })
       </el-form-item>
 
       <el-form-item label="City" prop="address.city">
-        <el-input v-model="form.address.city" />
+        <el-input v-model="form.address.city" @keypress="onlyLetters" />
       </el-form-item>
 
       <el-form-item label="Province" prop="address.province">
-        <el-input v-model="form.address.province" />
+        <el-input v-model="form.address.province" @keypress="onlyLetters" />
       </el-form-item>
 
       <el-form-item label="Zip Code" prop="address.zipCode">
-        <el-input v-model.number="form.address.zipCode" type="number" />
+        <el-input
+          v-model="form.address.zipCode"
+          type="number"
+          inputmode="numeric"
+          maxlength="4"
+          pattern="[0-9]*"
+          @keypress="onlyDigits"
+        />
       </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="submitForm">Add Student</el-button>
-        <el-button @click="closeDrawer">Cancel</el-button>
+        <el-button @click="closeForm">Cancel</el-button>
       </el-form-item>
     </el-form>
-  </el-drawer>
+  </component>
 </template>
 
 <!---------- STYLES ---------->
 
 <style scoped>
-.student-drawer {
+.student-drawer,
+.student-dialog {
   padding: 20px;
 }
 </style>

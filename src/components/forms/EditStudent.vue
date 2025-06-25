@@ -4,15 +4,19 @@ TheMasterlist.vue.*/
 <!---------- SCRIPTS ---------->
 
 <script setup lang="ts">
-import { ref, reactive, defineExpose, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 import { getAge } from '@/composables/getAge'
+import { nameFormatter } from '@/composables/nameFormatter'
 import { dateRestriction } from '@/composables/dateRestriction'
+import { entryRestriction } from '@/composables/entryRestriction'
 
 import type { Student } from '@/stores/student'
 import type { Course } from '@/stores/student'
 
-const { disableTooYoung } = dateRestriction()
+const { toTitleCase, formatMiddleInitial } = nameFormatter()
+const { onlyDigits, onlyLetters } = entryRestriction()
+const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
 
 const visible = ref(false)
@@ -70,7 +74,7 @@ const rules = {
 }
 
 const props = defineProps<{
-  mode?: 'drawer' | 'dialog' // default: drawer
+  mode?: 'drawer' | 'dialog'
 }>()
 const mode = computed(() => props.mode ?? 'drawer')
 
@@ -100,16 +104,18 @@ const submitForm = async () => {
     if (valid) {
       const updatedStudent: Student = {
         id: form.id,
-        firstName: form.firstName,
-        middleInitial: form.middleInitial,
-        lastName: form.lastName,
+        firstName: toTitleCase(form.firstName),
+        middleInitial: form.middleInitial
+          ? formatMiddleInitial(form.middleInitial)
+          : '',
+        lastName: toTitleCase(form.lastName),
         birthDate: new Date(form.birthday),
         age: 0,
         course: form.course,
         address: {
-          street: form.address.street,
-          city: form.address.city,
-          province: form.address.province,
+          street: toTitleCase(form.address.street),
+          city: toTitleCase(form.address.city),
+          province: toTitleCase(form.address.province),
           zipCode: Number(form.address.zipCode),
         },
       }
@@ -141,23 +147,28 @@ defineExpose({ openForm })
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
       <el-form-item label="First Name" prop="firstName">
-        <el-input v-model="form.firstName" />
+        <el-input v-model="form.firstName" @keypress="onlyLetters" />
       </el-form-item>
 
       <el-form-item label="Middle Initial" prop="middleInitial">
-        <el-input v-model="form.middleInitial" />
+        <el-input
+          v-model="form.middleInitial"
+          @keypress="onlyLetters"
+          maxlength="1"
+        />
       </el-form-item>
 
       <el-form-item label="Last Name" prop="lastName">
-        <el-input v-model="form.lastName" />
+        <el-input v-model="form.lastName" @keypress="onlyLetters" />
       </el-form-item>
 
       <el-form-item label="Birthday" prop="birthday">
         <el-date-picker
           v-model="form.birthday"
           type="date"
-          placeholder="Pick a date"
-          :disabled-date="disableTooYoung"
+          placeholder="YYYY-MM-DD"
+          :disabled-date="tooYoung"
+          :default-value="defaultDate"
           style="width: 100%"
         />
       </el-form-item>
@@ -190,15 +201,22 @@ defineExpose({ openForm })
       </el-form-item>
 
       <el-form-item label="City" prop="address.city">
-        <el-input v-model="form.address.city" />
+        <el-input v-model="form.address.city" @keypress="onlyLetters" />
       </el-form-item>
 
       <el-form-item label="Province" prop="address.province">
-        <el-input v-model="form.address.province" />
+        <el-input v-model="form.address.province" @keypress="onlyLetters" />
       </el-form-item>
 
       <el-form-item label="Zip Code" prop="address.zipCode">
-        <el-input v-model.number="form.address.zipCode" type="number" />
+        <el-input
+          v-model="form.address.zipCode"
+          type="text"
+          inputmode="numeric"
+          maxlength="4"
+          pattern="[0-9]*"
+          @keypress="onlyDigits"
+        />
       </el-form-item>
 
       <el-form-item>

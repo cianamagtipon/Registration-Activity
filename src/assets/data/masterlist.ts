@@ -3,7 +3,7 @@ import type { StudentRaw } from '@/stores/student'
 export const masterlist: readonly StudentRaw[] = [
   {
     firstName: 'Ana',
-    middleInitial: 'D',
+    middleInitial: 'D.',
     lastName: 'Cruz',
     birthDate: new Date('2003-05-12'),
     address: {
@@ -28,7 +28,7 @@ export const masterlist: readonly StudentRaw[] = [
   },
   {
     firstName: 'Liza',
-    middleInitial: 'K',
+    middleInitial: 'K.',
     lastName: 'Santos',
     birthDate: new Date('2002-02-28'),
     address: {
@@ -53,7 +53,7 @@ export const masterlist: readonly StudentRaw[] = [
   },
   {
     firstName: 'Samantha',
-    middleInitial: 'G',
+    middleInitial: 'G.',
     lastName: 'De Leon',
     birthDate: new Date('2003-12-20'),
     address: {
