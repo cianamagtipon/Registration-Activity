@@ -179,7 +179,6 @@ onMounted(() => {
 }
 
 .description-container {
-  height: 250px;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #ebeef5;
