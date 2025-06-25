@@ -2,10 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import { masterlist } from '@/assets/data/masterlist'
 import { getAge } from '@/composables/getAge'
-import { nameFormatter } from '@/composables/nameFormatter'
+import { entryFormatter } from '@/composables/entryFormatter'
 
 const { calculateAge } = getAge()
-const { toTitleCase, formatMiddleInitial } = nameFormatter()
+const { toTitleCase, formatMiddleInitial } = entryFormatter()
 
 export interface Address {
   street: string

@@ -7,14 +7,14 @@ TheMasterlist.vue.*/
 import { ref, reactive, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 import { getAge } from '@/composables/getAge'
-import { nameFormatter } from '@/composables/nameFormatter'
+import { entryFormatter } from '@/composables/entryFormatter'
 import { dateRestriction } from '@/composables/dateRestriction'
 import { entryRestriction } from '@/composables/entryRestriction'
 
 import type { Student } from '@/stores/student'
 import type { Course } from '@/stores/student'
 
-const { toTitleCase, formatMiddleInitial } = nameFormatter()
+const { toTitleCase, formatMiddleInitial } = entryFormatter()
 const { onlyDigits, onlyLetters, abbreviateStreet } = entryRestriction()
 const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
@@ -83,15 +83,18 @@ const mode = computed(() => props.mode ?? 'drawer')
 
 const openForm = (student: Student) => {
   form.id = student.id
-  form.firstName = student.firstName
+  form.firstName = toTitleCase(student.firstName)
   form.middleInitial = student.middleInitial
-  form.lastName = student.lastName
+    ? formatMiddleInitial(student.middleInitial)
+    : ''
+  form.lastName = toTitleCase(student.lastName)
   form.birthday = student.birthDate.toISOString().split('T')[0]
   form.course = student.course
-  form.address.street = student.address.street
-  form.address.city = student.address.city
-  form.address.province = student.address.province
+  form.address.street = toTitleCase(abbreviateStreet(student.address.street))
+  form.address.city = toTitleCase(student.address.city)
+  form.address.province = toTitleCase(student.address.province)
   form.address.zipCode = String(student.address.zipCode)
+
   visible.value = true
 }
 
@@ -143,7 +146,7 @@ defineExpose({ openForm })
   <component
     :is="mode === 'drawer' ? 'el-drawer' : 'el-dialog'"
     v-model="visible"
-    title="Add New Student"
+    title="Update Student Information"
     :size="mode === 'drawer' ? '30%' : undefined"
     :width="mode === 'dialog' ? '600px' : undefined"
     :with-header="true"
@@ -156,6 +159,7 @@ defineExpose({ openForm })
           v-model="form.firstName"
           maxlength="50"
           @keypress="onlyLetters"
+          @blur="form.firstName = toTitleCase(form.firstName)"
         />
       </el-form-item>
 
@@ -164,6 +168,7 @@ defineExpose({ openForm })
           v-model="form.middleInitial"
           maxlength="1"
           @keypress="onlyLetters"
+          @blur="form.middleInitial = formatMiddleInitial(form.middleInitial)"
         />
       </el-form-item>
 
@@ -172,6 +177,7 @@ defineExpose({ openForm })
           v-model="form.lastName"
           maxlength="50"
           @keypress="onlyLetters"
+          @blur="form.lastName = toTitleCase(form.lastName)"
         />
       </el-form-item>
 
@@ -213,7 +219,11 @@ defineExpose({ openForm })
         <el-input
           v-model="form.address.street"
           maxlength="250"
-          @blur="form.address.street = abbreviateStreet(form.address.street)"
+          @blur="
+            form.address.street = toTitleCase(
+              abbreviateStreet(form.address.street),
+            )
+          "
         />
       </el-form-item>
 
@@ -222,6 +232,7 @@ defineExpose({ openForm })
           v-model="form.address.city"
           maxlength="250"
           @keypress="onlyLetters"
+          @blur="form.address.city = toTitleCase(form.address.city)"
         />
       </el-form-item>
 
@@ -230,6 +241,7 @@ defineExpose({ openForm })
           v-model="form.address.province"
           maxlength="250"
           @keypress="onlyLetters"
+          @blur="form.address.province = toTitleCase(form.address.province)"
         />
       </el-form-item>
 
@@ -245,7 +257,7 @@ defineExpose({ openForm })
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="submitForm">Add Student</el-button>
+        <el-button type="primary" @click="submitForm">Update Student</el-button>
         <el-button @click="closeForm">Cancel</el-button>
       </el-form-item>
     </el-form>

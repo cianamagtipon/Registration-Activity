@@ -8,15 +8,14 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 import { dateRestriction } from '@/composables/dateRestriction'
 import { entryRestriction } from '@/composables/entryRestriction'
-import { nameFormatter } from '@/composables/nameFormatter'
+import { entryFormatter } from '@/composables/entryFormatter'
 import { getAge } from '@/composables/getAge'
 
-const { toTitleCase, formatMiddleInitial } = nameFormatter()
+const { toTitleCase, formatMiddleInitial } = entryFormatter()
 const { onlyDigits, onlyLetters, abbreviateStreet } = entryRestriction()
 const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
 
-// Props to allow mode switching
 const props = defineProps<{
   mode?: 'drawer' | 'dialog'
 }>()
@@ -104,6 +103,7 @@ const resetForm = () => {
 const submitForm = async () => {
   if (!formRef.value) return
 
+  // keeping format in case user doesn't blur field before submition
   try {
     await formRef.value.validate()
     emit('student-added', {
@@ -115,7 +115,7 @@ const submitForm = async () => {
       birthday: form.birthday,
       course: form.course,
       address: {
-        street: toTitleCase(form.address.street),
+        street: toTitleCase(abbreviateStreet(form.address.street)),
         city: toTitleCase(form.address.city),
         province: toTitleCase(form.address.province),
         zipCode: form.address.zipCode,
@@ -159,7 +159,7 @@ defineExpose({ openForm })
           v-model="form.middleInitial"
           maxlength="1"
           @keypress="onlyLetters"
-          @blur="form.middleInitial = toTitleCase(form.middleInitial)"
+          @blur="form.middleInitial = formatMiddleInitial(form.middleInitial)"
         />
       </el-form-item>
 

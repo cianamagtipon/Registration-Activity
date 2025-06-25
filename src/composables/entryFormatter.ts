@@ -1,4 +1,4 @@
-export const nameFormatter = () => {
+export const entryFormatter = () => {
   const toTitleCase = (value: string) => {
     return value
       .toLowerCase()
