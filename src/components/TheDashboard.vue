@@ -158,6 +158,8 @@ onMounted(() => {
         </el-carousel-item>
       </el-carousel>
     </div>
+
+    <!-- FILTER -->
   </div>
 </template>
 
@@ -190,7 +192,7 @@ onMounted(() => {
 }
 
 .empty {
-  height: 250px;
+  height: 150px;
 }
 
 @media screen and (max-width: 800px) {
@@ -225,5 +227,10 @@ onMounted(() => {
 
 ::v-deep(.el-carousel__item) {
   overflow: visible !important;
+}
+
+.empty :deep(.el-empty__image) {
+  width: 90px;
+  height: 90px;
 }
 </style>

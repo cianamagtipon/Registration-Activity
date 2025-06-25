@@ -142,7 +142,11 @@ defineExpose({ openForm })
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
       <el-form-item label="First Name" prop="firstName">
-        <el-input v-model="form.firstName" @keypress="onlyLetters" />
+        <el-input
+          v-model="form.firstName"
+          maxlength="50"
+          @keypress="onlyLetters"
+        />
       </el-form-item>
 
       <el-form-item label="Middle Initial" prop="middleInitial">
@@ -154,7 +158,11 @@ defineExpose({ openForm })
       </el-form-item>
 
       <el-form-item label="Last Name" prop="lastName">
-        <el-input v-model="form.lastName" @keypress="onlyLetters" />
+        <el-input
+          v-model="form.lastName"
+          maxlength="50"
+          @keypress="onlyLetters"
+        />
       </el-form-item>
 
       <el-form-item label="Birthday" prop="birthday">
@@ -192,15 +200,23 @@ defineExpose({ openForm })
       </el-form-item>
 
       <el-form-item label="Street" prop="address.street">
-        <el-input v-model="form.address.street" />
+        <el-input v-model="form.address.street" maxlength="250" />
       </el-form-item>
 
       <el-form-item label="City" prop="address.city">
-        <el-input v-model="form.address.city" @keypress="onlyLetters" />
+        <el-input
+          v-model="form.address.city"
+          maxlength="250"
+          @keypress="onlyLetters"
+        />
       </el-form-item>
 
       <el-form-item label="Province" prop="address.province">
-        <el-input v-model="form.address.province" @keypress="onlyLetters" />
+        <el-input
+          v-model="form.address.province"
+          maxlength="250"
+          @keypress="onlyLetters"
+        />
       </el-form-item>
 
       <el-form-item label="Zip Code" prop="address.zipCode">
