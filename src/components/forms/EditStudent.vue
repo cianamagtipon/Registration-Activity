@@ -1,4 +1,5 @@
-/*BASIC DESCRIPTION: Form for editing student data. One of the children of TheMasterlist.vue.*/
+/*BASIC DESCRIPTION: Form for editing student data. One of the children of
+TheMasterlist.vue.*/
 
 <!---------- SCRIPTS ---------->
 
@@ -17,7 +18,9 @@ const { calculateAge } = getAge()
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
 
-const age = computed(() => (form.birthday ? calculateAge(new Date(form.birthday)) : ''))
+const age = computed(() =>
+  form.birthday ? calculateAge(new Date(form.birthday)) : '',
+)
 
 interface EditStudentForm {
   id: string
@@ -60,11 +63,18 @@ const rules = {
   course: [{ required: true, message: 'Required', trigger: 'change' }],
   'address.street': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.city': [{ required: true, message: 'Required', trigger: 'blur' }],
-  'address.province': [{ required: true, message: 'Required', trigger: 'blur' }],
+  'address.province': [
+    { required: true, message: 'Required', trigger: 'blur' },
+  ],
   'address.zipCode': [{ required: true, message: 'Required', trigger: 'blur' }],
 }
 
-const openDrawer = (student: Student) => {
+const props = defineProps<{
+  mode?: 'drawer' | 'dialog' // default: drawer
+}>()
+const mode = computed(() => props.mode ?? 'drawer')
+
+const openForm = (student: Student) => {
   form.id = student.id
   form.firstName = student.firstName
   form.middleInitial = student.middleInitial
@@ -78,7 +88,7 @@ const openDrawer = (student: Student) => {
   visible.value = true
 }
 
-const closeDrawer = () => {
+const closeForm = () => {
   formRef.value?.resetFields()
   visible.value = false
 }
@@ -106,25 +116,28 @@ const submitForm = async () => {
 
       emit('student-updated', updatedStudent)
       ElMessage.success('Student updated!')
-      closeDrawer()
+      closeForm()
     } else {
       ElMessage.error('Validation failed.')
     }
   })
 }
 
-defineExpose({ openDrawer })
+defineExpose({ openForm })
 </script>
 
 <!---------- TEMPLATES ---------->
 
 <template>
-  <el-drawer
+  <component
+    :is="mode === 'drawer' ? 'el-drawer' : 'el-dialog'"
     v-model="visible"
     title="Update Student Information"
-    size="30%"
+    :size="mode === 'drawer' ? '30%' : undefined"
+    :width="mode === 'dialog' ? '600px' : undefined"
     :with-header="true"
-    custom-class="student-drawer"
+    :custom-class="mode === 'drawer' ? 'student-drawer' : 'student-dialog'"
+    :destroy-on-close="true"
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
       <el-form-item label="First Name" prop="firstName">
@@ -155,10 +168,19 @@ defineExpose({ openDrawer })
 
       <el-form-item label="Course" prop="course">
         <el-select v-model="form.course" placeholder="Select a course">
-          <el-option label=" Bachelor of Science in Computer Science" value="BSCS" />
-          <el-option label="Bachelor of Science in Information and Technology" value="BSIT" />
+          <el-option
+            label="Bachelor of Science in Computer Science"
+            value="BSCS"
+          />
+          <el-option
+            label="Bachelor of Science in Information and Technology"
+            value="BSIT"
+          />
           <el-option label="Bachelor of Science in Tourism" value="BST" />
-          <el-option label="Bachelor of Science in Hotel and Restaurant Management" value="BSHRM" />
+          <el-option
+            label="Bachelor of Science in Hotel and Restaurant Management"
+            value="BSHRM"
+          />
           <el-option label="Bachelor of Science in Nursing" value="BSN" />
         </el-select>
       </el-form-item>
@@ -181,16 +203,17 @@ defineExpose({ openDrawer })
 
       <el-form-item>
         <el-button type="primary" @click="submitForm">Update Student</el-button>
-        <el-button @click="closeDrawer">Cancel</el-button>
+        <el-button @click="closeForm">Cancel</el-button>
       </el-form-item>
     </el-form>
-  </el-drawer>
+  </component>
 </template>
 
 <!---------- STYLES ---------->
 
 <style scoped>
-.student-drawer {
+.student-drawer,
+.student-dialog {
   padding: 20px;
 }
 </style>

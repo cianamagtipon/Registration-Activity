@@ -10,9 +10,9 @@ export const masterlist: readonly StudentRaw[] = [
       street: '123 Mabini St.',
       city: 'Quezon City',
       province: 'Metro Manila',
-      zipCode: 1100
+      zipCode: 1100,
     },
-    course: 'BSCS'
+    course: 'BSCS',
   },
   {
     firstName: 'Mark',
@@ -22,9 +22,9 @@ export const masterlist: readonly StudentRaw[] = [
       street: '456 Rizal Ave.',
       city: 'Manila',
       province: 'Metro Manila',
-      zipCode: 1000
+      zipCode: 1000,
     },
-    course: 'BSIT'
+    course: 'BSIT',
   },
   {
     firstName: 'Liza',
@@ -35,9 +35,9 @@ export const masterlist: readonly StudentRaw[] = [
       street: '789 Bonifacio Blvd.',
       city: 'Pasig',
       province: 'Metro Manila',
-      zipCode: 1600
+      zipCode: 1600,
     },
-    course: 'BSN'
+    course: 'BSN',
   },
   {
     firstName: 'Joshua',
@@ -47,9 +47,9 @@ export const masterlist: readonly StudentRaw[] = [
       street: '321 Aguinaldo St.',
       city: 'Cebu City',
       province: 'Cebu',
-      zipCode: 6000
+      zipCode: 6000,
     },
-    course: 'BSHRM'
+    course: 'BSHRM',
   },
   {
     firstName: 'Samantha',
@@ -60,8 +60,8 @@ export const masterlist: readonly StudentRaw[] = [
       street: '555 Katipunan Ave.',
       city: 'Quezon City',
       province: 'Metro Manila',
-      zipCode: 1108
+      zipCode: 1108,
     },
-    course: 'BST'
-  }
+    course: 'BST',
+  },
 ]

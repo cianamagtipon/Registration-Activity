@@ -1,4 +1,5 @@
-/*BASIC DESCRIPTION: These are the main components of the student masterlist page.*/
+/*BASIC DESCRIPTION: These are the main components of the student masterlist
+page.*/
 
 <!---------- SCRIPTS ---------->
 
@@ -67,45 +68,77 @@ const deleteRow = (id) => {
 <template>
   <div class="table-container">
     <el-table :data="students" max-height="410px" class="student-table">
-      <el-table-column prop="lastName" label="Last Name" width="150" align="center" />
-      <el-table-column prop="firstName" label="First Name" width="150" align="center" />
-      <el-table-column prop="middleInitial" label="Middle Initial" width="120" align="center" />
-      <el-table-column prop="birthDate" label="Birth Date" width="140" align="center">
+      <el-table-column
+        prop="lastName"
+        label="Last Name"
+        min-width="150"
+        align="center"
+      />
+      <el-table-column
+        prop="firstName"
+        label="First Name"
+        min-width="150"
+        align="center"
+      />
+      <el-table-column
+        prop="middleInitial"
+        label="Middle Initial"
+        min-width="120"
+        align="center"
+      />
+      <el-table-column
+        prop="birthDate"
+        label="Birth Date"
+        min-width="140"
+        align="center"
+      >
         <template #default="scope">
           {{ new Date(scope.row.birthDate).toLocaleDateString() }}
         </template>
       </el-table-column>
-      <el-table-column prop="age" label="Age" width="90" align="center" />
-      <el-table-column prop="address" label="Address" width="250">
+      <el-table-column prop="age" label="Age" min-width="90" align="center" />
+      <el-table-column prop="address" label="Address" min-width="250">
         <template #default="scope">
           {{ scope.row.address.street }}, {{ scope.row.address.city }},
           {{ scope.row.address.province }}. {{ scope.row.address.zipCode }}.
         </template>
       </el-table-column>
-      <el-table-column label="Course" width="250">
+      <el-table-column label="Course" min-width="250">
         <template #default="scope">
           {{ courseNames[scope.row.course] || scope.row.course }}
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="Operations" width="150" align="center">
+      <el-table-column
+        fixed="right"
+        label="Operations"
+        min-width="150"
+        align="center"
+      >
         <template #default="scope">
           <el-button
             link
             type="primary"
             size="medium"
-            @click="editStudentRef.openDrawer(scope.row)"
+            @click="editStudentRef.openForm(scope.row)"
           >
             Edit
           </el-button>
 
-          <el-button link type="primary" size="medium" @click.prevent="deleteRow(scope.row.id)">
+          <el-button
+            link
+            type="primary"
+            size="medium"
+            @click.prevent="deleteRow(scope.row.id)"
+          >
             Remove
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-button class="add-button" @click="addStudentRef.openDrawer()"> Add Student </el-button>
+    <el-button class="add-button" @click="addStudentRef.openDrawer()">
+      Add Student
+    </el-button>
   </div>
 
   <EditStudent ref="editStudentRef" @student-updated="handleStudentUpdated" />
@@ -116,18 +149,14 @@ const deleteRow = (id) => {
 
 <style scoped>
 .table-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-height: 60vh;
+  width: 80vw;
 }
 
 .student-table {
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #ebeef5;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 
 .add-button {

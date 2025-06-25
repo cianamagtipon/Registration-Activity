@@ -31,7 +31,11 @@ export const useUserStore = defineStore('user', () => {
     isLoggedIn.value = false
   }
 
-  const handleForgetPassword = (): 'empty' | 'notFound' | 'requested' | 'alreadyRequested' => {
+  const handleForgetPassword = ():
+    | 'empty'
+    | 'notFound'
+    | 'requested'
+    | 'alreadyRequested' => {
     if (!username.value) return 'empty'
     if (username.value !== 'admin') return 'notFound'
 

@@ -67,7 +67,9 @@ export const useStudentStore = defineStore('student', () => {
   }
 
   const updateStudent = (updated: Student) => {
-    const index = students.value.findIndex((original) => original.id === updated.id)
+    const index = students.value.findIndex(
+      (original) => original.id === updated.id,
+    )
     if (index !== -1) {
       students.value[index] = {
         ...updated,
