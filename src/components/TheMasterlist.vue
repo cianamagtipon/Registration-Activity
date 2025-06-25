@@ -23,6 +23,14 @@ onMounted(() => {
   studentStore.fetchStudents()
 })
 
+const courseNames = {
+  BSCS: 'Bachelor of Science in Computer Science',
+  BSIT: 'Bachelor of Science in Information Technology',
+  BST: 'Bachelor of Science in Tourism',
+  BSHRM: 'Bachelor of Science in Hotel and Restaurant Management',
+  BSN: 'Bachelor of Science in Nursing',
+}
+
 const handleStudentAdded = (rawForm) => {
   const studentRaw = {
     firstName: rawForm.firstName,
@@ -74,7 +82,11 @@ const deleteRow = (id) => {
           {{ scope.row.address.province }}. {{ scope.row.address.zipCode }}.
         </template>
       </el-table-column>
-      <el-table-column prop="course" label="Course" width="150" align="center" />
+      <el-table-column label="Course" width="250">
+        <template #default="scope">
+          {{ courseNames[scope.row.course] || scope.row.course }}
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="Operations" width="150" align="center">
         <template #default="scope">
           <el-button
