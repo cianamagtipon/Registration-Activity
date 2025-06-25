@@ -1,9 +1,6 @@
-/*BASIC DESCRIPTION: Form for editing student data.
-One of the children of TheMasterlist.vue.*/
-
+/*BASIC DESCRIPTION: Form for editing student data. One of the children of TheMasterlist.vue.*/
 
 <!---------- SCRIPTS ---------->
-
 
 <script setup lang="ts">
 import { ref, reactive, defineExpose, computed } from 'vue'
@@ -14,17 +11,13 @@ import { dateRestriction } from '@/composables/dateRestriction'
 import type { Student } from '@/stores/student'
 import type { Course } from '@/stores/student'
 
-
 const { disableTooYoung } = dateRestriction()
 const { calculateAge } = getAge()
 
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
 
-const age = computed(() =>
-  form.birthday ? calculateAge(new Date(form.birthday)) : ''
-)
-
+const age = computed(() => (form.birthday ? calculateAge(new Date(form.birthday)) : ''))
 
 interface EditStudentForm {
   id: string
@@ -41,11 +34,9 @@ interface EditStudentForm {
   }
 }
 
-
 const emit = defineEmits<{
   (e: 'student-updated', student: Student): void
 }>()
-
 
 const form = reactive<EditStudentForm>({
   id: '',
@@ -59,9 +50,8 @@ const form = reactive<EditStudentForm>({
     city: '',
     province: '',
     zipCode: 0,
-  }
+  },
 })
-
 
 const rules = {
   firstName: [{ required: true, message: 'Required', trigger: 'blur' }],
@@ -73,7 +63,6 @@ const rules = {
   'address.province': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.zipCode': [{ required: true, message: 'Required', trigger: 'blur' }],
 }
-
 
 const openDrawer = (student: Student) => {
   form.id = student.id
@@ -88,7 +77,6 @@ const openDrawer = (student: Student) => {
   form.address.zipCode = student.address.zipCode
   visible.value = true
 }
-
 
 const closeDrawer = () => {
   formRef.value?.resetFields()
@@ -113,7 +101,7 @@ const submitForm = async () => {
           city: form.address.city,
           province: form.address.province,
           zipCode: Number(form.address.zipCode),
-        }
+        },
       }
 
       emit('student-updated', updatedStudent)
@@ -127,7 +115,6 @@ const submitForm = async () => {
 
 defineExpose({ openDrawer })
 </script>
-
 
 <!---------- TEMPLATES ---------->
 
@@ -168,21 +155,11 @@ defineExpose({ openDrawer })
 
       <el-form-item label="Course" prop="course">
         <el-select v-model="form.course" placeholder="Select a course">
-          <el-option
-            label=" Bachelor of Science in Computer Science"
-            value="BSCS" />
-          <el-option
-            label="Bachelor of Science in Information and Technology"
-            value="BSIT" />
-          <el-option
-            label="Bachelor of Science in Tourism"
-            value="BST" />
-          <el-option
-            label="Bachelor of Science in Hotel and Restaurant Management"
-            value="BSHRM" />
-          <el-option
-            label="Bachelor of Science in Nursing"
-            value="BSN" />
+          <el-option label=" Bachelor of Science in Computer Science" value="BSCS" />
+          <el-option label="Bachelor of Science in Information and Technology" value="BSIT" />
+          <el-option label="Bachelor of Science in Tourism" value="BST" />
+          <el-option label="Bachelor of Science in Hotel and Restaurant Management" value="BSHRM" />
+          <el-option label="Bachelor of Science in Nursing" value="BSN" />
         </el-select>
       </el-form-item>
 
@@ -211,7 +188,6 @@ defineExpose({ openDrawer })
 </template>
 
 <!---------- STYLES ---------->
-
 
 <style scoped>
 .student-drawer {

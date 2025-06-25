@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
-
 interface UserState {
   username: string
   isLoggedIn: boolean
   forgetClickCount: number
 }
-
 
 export const useUserStore = defineStore('user', () => {
   const username = ref<string>('')

@@ -1,16 +1,12 @@
-/*BASIC DESCRIPTION: Form for adding student.
-One of the children of TheMasterlist.vue.*/
-
+/*BASIC DESCRIPTION: Form for adding student. One of the children of TheMasterlist.vue.*/
 
 <!---------- SCRIPTS ---------->
-
 
 <script lang="ts" setup>
 import { ref, reactive, defineExpose, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 import { dateRestriction } from '@/composables/dateRestriction'
 import { getAge } from '@/composables/getAge'
-
 
 const { disableTooYoung } = dateRestriction()
 const { calculateAge } = getAge()
@@ -22,9 +18,7 @@ const emit = defineEmits<{
   (e: 'student-added', form: StudentForm): void
 }>()
 
-const age = computed(() =>
-  form.birthday ? calculateAge(new Date(form.birthday)) : ''
-)
+const age = computed(() => (form.birthday ? calculateAge(new Date(form.birthday)) : ''))
 
 interface StudentForm {
   firstName: string
@@ -64,7 +58,7 @@ const rules = {
   'address.province': [{ required: true, message: 'Required', trigger: 'blur' }],
   'address.zipCode': [
     { required: true, message: 'Required', trigger: 'blur' },
-    { type: 'number', message: 'Must be numeric', trigger: 'blur' }
+    { type: 'number', message: 'Must be numeric', trigger: 'blur' },
   ],
 }
 
@@ -106,9 +100,7 @@ const submitForm = async () => {
 defineExpose({ openDrawer })
 </script>
 
-
 <!---------- TEMPLATES ---------->
-
 
 <template>
   <el-drawer
@@ -147,21 +139,11 @@ defineExpose({ openDrawer })
 
       <el-form-item label="Course" prop="course">
         <el-select v-model="form.course" placeholder="Select a course">
-          <el-option
-            label=" Bachelor of Science in Computer Science"
-            value="BSCS" />
-          <el-option
-            label="Bachelor of Science in Information and Technology"
-            value="BSIT" />
-          <el-option
-            label="Bachelor of Science in Tourism"
-            value="BST" />
-          <el-option
-            label="Bachelor of Science in Hotel and Restaurant Management"
-            value="BSHRM" />
-          <el-option
-            label="Bachelor of Science in Nursing"
-            value="BSN" />
+          <el-option label=" Bachelor of Science in Computer Science" value="BSCS" />
+          <el-option label="Bachelor of Science in Information and Technology" value="BSIT" />
+          <el-option label="Bachelor of Science in Tourism" value="BST" />
+          <el-option label="Bachelor of Science in Hotel and Restaurant Management" value="BSHRM" />
+          <el-option label="Bachelor of Science in Nursing" value="BSN" />
         </el-select>
       </el-form-item>
 
@@ -189,10 +171,7 @@ defineExpose({ openDrawer })
   </el-drawer>
 </template>
 
-
-
 <!---------- STYLES ---------->
-
 
 <style scoped>
 .student-drawer {
