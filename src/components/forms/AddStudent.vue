@@ -12,7 +12,7 @@ import { nameFormatter } from '@/composables/nameFormatter'
 import { getAge } from '@/composables/getAge'
 
 const { toTitleCase, formatMiddleInitial } = nameFormatter()
-const { onlyDigits, onlyLetters } = entryRestriction()
+const { onlyDigits, onlyLetters, abbreviateStreet } = entryRestriction()
 const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
 
@@ -72,7 +72,10 @@ const rules = {
   'address.province': [
     { required: true, message: 'Required', trigger: 'blur' },
   ],
-  'address.zipCode': [{ required: true, message: 'Required', trigger: 'blur' }],
+  'address.zipCode': [
+    { required: true, message: 'Required', trigger: 'blur' },
+    { min: 4, max: 4, message: 'Zip Code must be 4 digits', trigger: 'blur' },
+  ],
 }
 
 const openForm = () => {
@@ -120,6 +123,7 @@ const submitForm = async () => {
     })
     closeForm()
   } catch (error) {
+    ElMessage.closeAll()
     ElMessage.error('Please fill all required fields')
   }
 }
@@ -146,6 +150,7 @@ defineExpose({ openForm })
           v-model="form.firstName"
           maxlength="50"
           @keypress="onlyLetters"
+          @blur="form.firstName = toTitleCase(form.firstName)"
         />
       </el-form-item>
 
@@ -154,6 +159,7 @@ defineExpose({ openForm })
           v-model="form.middleInitial"
           maxlength="1"
           @keypress="onlyLetters"
+          @blur="form.middleInitial = toTitleCase(form.middleInitial)"
         />
       </el-form-item>
 
@@ -162,6 +168,7 @@ defineExpose({ openForm })
           v-model="form.lastName"
           maxlength="50"
           @keypress="onlyLetters"
+          @blur="form.lastName = toTitleCase(form.lastName)"
         />
       </el-form-item>
 
@@ -200,7 +207,15 @@ defineExpose({ openForm })
       </el-form-item>
 
       <el-form-item label="Street" prop="address.street">
-        <el-input v-model="form.address.street" maxlength="250" />
+        <el-input
+          v-model="form.address.street"
+          maxlength="250"
+          @blur="
+            form.address.street = toTitleCase(
+              abbreviateStreet(form.address.street),
+            )
+          "
+        />
       </el-form-item>
 
       <el-form-item label="City" prop="address.city">
@@ -208,6 +223,7 @@ defineExpose({ openForm })
           v-model="form.address.city"
           maxlength="250"
           @keypress="onlyLetters"
+          @blur="form.address.city = toTitleCase(form.address.city)"
         />
       </el-form-item>
 
@@ -216,13 +232,14 @@ defineExpose({ openForm })
           v-model="form.address.province"
           maxlength="250"
           @keypress="onlyLetters"
+          @blur="form.address.province = toTitleCase(form.address.province)"
         />
       </el-form-item>
 
       <el-form-item label="Zip Code" prop="address.zipCode">
         <el-input
           v-model="form.address.zipCode"
-          type="number"
+          type="text"
           inputmode="numeric"
           maxlength="4"
           pattern="[0-9]*"

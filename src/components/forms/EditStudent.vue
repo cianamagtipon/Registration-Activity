@@ -15,7 +15,7 @@ import type { Student } from '@/stores/student'
 import type { Course } from '@/stores/student'
 
 const { toTitleCase, formatMiddleInitial } = nameFormatter()
-const { onlyDigits, onlyLetters } = entryRestriction()
+const { onlyDigits, onlyLetters, abbreviateStreet } = entryRestriction()
 const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
 
@@ -37,7 +37,7 @@ interface EditStudentForm {
     street: string
     city: string
     province: string
-    zipCode: number
+    zipCode: string
   }
 }
 
@@ -56,7 +56,7 @@ const form = reactive<EditStudentForm>({
     street: '',
     city: '',
     province: '',
-    zipCode: 0,
+    zipCode: '',
   },
 })
 
@@ -70,7 +70,10 @@ const rules = {
   'address.province': [
     { required: true, message: 'Required', trigger: 'blur' },
   ],
-  'address.zipCode': [{ required: true, message: 'Required', trigger: 'blur' }],
+  'address.zipCode': [
+    { required: true, message: 'Required', trigger: 'blur' },
+    { min: 4, max: 4, message: 'Zip Code must be 4 digits', trigger: 'blur' },
+  ],
 }
 
 const props = defineProps<{
@@ -88,7 +91,7 @@ const openForm = (student: Student) => {
   form.address.street = student.address.street
   form.address.city = student.address.city
   form.address.province = student.address.province
-  form.address.zipCode = student.address.zipCode
+  form.address.zipCode = String(student.address.zipCode)
   visible.value = true
 }
 
@@ -121,9 +124,11 @@ const submitForm = async () => {
       }
 
       emit('student-updated', updatedStudent)
+      ElMessage.closeAll()
       ElMessage.success('Student updated!')
       closeForm()
     } else {
+      ElMessage.closeAll()
       ElMessage.error('Validation failed.')
     }
   })
@@ -138,7 +143,7 @@ defineExpose({ openForm })
   <component
     :is="mode === 'drawer' ? 'el-drawer' : 'el-dialog'"
     v-model="visible"
-    title="Update Student Information"
+    title="Add New Student"
     :size="mode === 'drawer' ? '30%' : undefined"
     :width="mode === 'dialog' ? '600px' : undefined"
     :with-header="true"
@@ -147,19 +152,27 @@ defineExpose({ openForm })
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
       <el-form-item label="First Name" prop="firstName">
-        <el-input v-model="form.firstName" @keypress="onlyLetters" />
+        <el-input
+          v-model="form.firstName"
+          maxlength="50"
+          @keypress="onlyLetters"
+        />
       </el-form-item>
 
       <el-form-item label="Middle Initial" prop="middleInitial">
         <el-input
           v-model="form.middleInitial"
-          @keypress="onlyLetters"
           maxlength="1"
+          @keypress="onlyLetters"
         />
       </el-form-item>
 
       <el-form-item label="Last Name" prop="lastName">
-        <el-input v-model="form.lastName" @keypress="onlyLetters" />
+        <el-input
+          v-model="form.lastName"
+          maxlength="50"
+          @keypress="onlyLetters"
+        />
       </el-form-item>
 
       <el-form-item label="Birthday" prop="birthday">
@@ -197,15 +210,27 @@ defineExpose({ openForm })
       </el-form-item>
 
       <el-form-item label="Street" prop="address.street">
-        <el-input v-model="form.address.street" />
+        <el-input
+          v-model="form.address.street"
+          maxlength="250"
+          @blur="form.address.street = abbreviateStreet(form.address.street)"
+        />
       </el-form-item>
 
       <el-form-item label="City" prop="address.city">
-        <el-input v-model="form.address.city" @keypress="onlyLetters" />
+        <el-input
+          v-model="form.address.city"
+          maxlength="250"
+          @keypress="onlyLetters"
+        />
       </el-form-item>
 
       <el-form-item label="Province" prop="address.province">
-        <el-input v-model="form.address.province" @keypress="onlyLetters" />
+        <el-input
+          v-model="form.address.province"
+          maxlength="250"
+          @keypress="onlyLetters"
+        />
       </el-form-item>
 
       <el-form-item label="Zip Code" prop="address.zipCode">
@@ -220,7 +245,7 @@ defineExpose({ openForm })
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="submitForm">Update Student</el-button>
+        <el-button type="primary" @click="submitForm">Add Student</el-button>
         <el-button @click="closeForm">Cancel</el-button>
       </el-form-item>
     </el-form>
