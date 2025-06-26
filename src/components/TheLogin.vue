@@ -70,12 +70,14 @@ const forgetPassword = () => {
     <form class="login" @submit.prevent="login">
       <el-input
         v-model="username"
+        class="username"
         placeholder="Username"
         style="margin-bottom: 16px"
         :prefix-icon="User"
       />
       <el-input
         v-model="password"
+        class="password"
         placeholder="Password"
         style="margin-bottom: 30px"
         :prefix-icon="Lock"
@@ -114,5 +116,59 @@ const forgetPassword = () => {
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
+}
+
+::v-deep(.el-input__wrapper) {
+  background-color: transparent !important;
+  border: 1px white;
+  border-radius: 8px;
+}
+
+/* INPUT */
+::v-deep(.el-input__wrapper:hover) {
+  border-color: white !important;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+::v-deep(.el-input.is-focus .el-input__wrapper) {
+  border-color: white !important;
+  box-shadow: 0 0 12px rgba(36, 75, 197, 0.5);
+}
+
+/* ICON */
+::v-deep(.el-icon) {
+  color: white !important;
+}
+
+/* TEXT INPUT */
+::v-deep(.el-input__inner) {
+  background-color: transparent !important;
+  color: white !important;
+}
+
+/* PLACEHOLDER TEXT */
+::v-deep(.el-input__inner::placeholder) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* FORGOT PASSWORD */
+::v-deep(.el-link) {
+  color: white !important;
+}
+
+/* BUTTON */
+::v-deep(.el-button) {
+  background-color: white !important;
+  color: #244bc5 !important;
+  border: none;
+  box-shadow: 0 4px 20px rgba(36, 75, 197, 0.4);
+  transition: all 0.3s ease;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+::v-deep(.el-button:hover) {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
 }
 </style>

@@ -6,3 +6,9 @@
   padding: 2rem;
   font-weight: normal;
 }
+
+.login-bg {
+  background: #244bc5;
+  background-size: cover;
+  background-position: center;
+}
