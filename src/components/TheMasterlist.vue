@@ -244,7 +244,6 @@ const resetData = () => {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
-  margin-top: 20px;
   margin-bottom: 10px;
   flex-wrap: wrap;
   gap: 10px;

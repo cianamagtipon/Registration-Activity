@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView, useRoute, useRouter } from 'vue-router'
-import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { Setting, ArrowDown } from '@element-plus/icons-vue'
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
+import { Setting } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { useStudentStore } from '@/stores/student'
@@ -77,6 +77,8 @@ const handleCommand = (command: string) => {
     ElMessage(`Clicked item: ${command}`)
   }
 }
+
+const isDropdownOpen = ref(false)
 </script>
 
 <template>
@@ -97,15 +99,15 @@ const handleCommand = (command: string) => {
       <el-dropdown
         trigger="click"
         @command="handleCommand"
+        @visible-change="(val) => (isDropdownOpen = val)"
         style="justify-content: center; align-content: center"
       >
         <span
           class="el-dropdown-link"
           style="cursor: pointer; display: flex; align-items: center"
         >
-          <el-icon><Setting /></el-icon>
-          <el-icon class="el-icon--right" style="margin-left: 4px"
-            ><ArrowDown
+          <el-icon :class="['setting-icon', isDropdownOpen ? 'active' : '']"
+            ><Setting
           /></el-icon>
         </span>
         <template #dropdown>
@@ -127,13 +129,12 @@ const handleCommand = (command: string) => {
 <style scoped>
 .table-header {
   display: grid;
-  grid-template-columns: 85% 15%;
+  grid-template-columns: 1fr auto;
   grid-template-rows: 1fr;
   align-items: center;
   gap: 10px;
   margin-top: 20px;
   margin-bottom: 10px;
-  /* no changes on smaller screens, so no media queries to switch to vertical */
 }
 
 /* NAVBAR CONTAINER */
@@ -156,18 +157,13 @@ const handleCommand = (command: string) => {
   display: flex; /* add this */
   justify-content: center;
   align-items: center;
+  padding: 0 16px;
 
   border-radius: 12px;
   box-shadow:
     0 0 15px rgba(100, 150, 255, 0.5),
     0 1px 6px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(
-    to right,
-    #244bc5 0%,
-    #6b91ed 45%,
-    #6b91ed 55%,
-    #244bc5 100%
-  );
+  background: #244bc5;
   height: 60px;
 
   color: white;
@@ -177,9 +173,24 @@ const handleCommand = (command: string) => {
   color: white !important;
 }
 
+.setting-icon {
+  font-size: 20px;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.setting-icon:hover {
+  color: #6b91ed !important;
+  transform: scale(1.1);
+}
+
+::v-deep(.setting-icon.active) {
+  color: #00b1b1 !important;
+}
+
 /* PAGE CONTAINER */
 .main {
-  padding-top: 50px;
+  padding-top: 40px;
   display: flex;
   justify-content: center;
 }
