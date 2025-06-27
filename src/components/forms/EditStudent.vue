@@ -6,6 +6,7 @@ TheMasterlist.vue.*/
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
+
 import { getAge } from '@/composables/getAge'
 import { entryFormatter } from '@/composables/entryFormatter'
 import { dateRestriction } from '@/composables/dateRestriction'
@@ -14,18 +15,22 @@ import { entryRestriction } from '@/composables/entryRestriction'
 import type { Student } from '@/stores/student'
 import type { Course } from '@/stores/student'
 
+// Composables
 const { toTitleCase, formatMiddleInitial } = entryFormatter()
 const { onlyDigits, onlyLetters, abbreviateStreet } = entryRestriction()
 const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
 
+// Modal visibility and form ref
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
 
+// Computed age field
 const age = computed(() =>
   form.birthday ? calculateAge(new Date(form.birthday)) : '',
 )
 
+// Reactive form state
 interface EditStudentForm {
   id: string
   firstName: string
@@ -40,10 +45,6 @@ interface EditStudentForm {
     zipCode: string
   }
 }
-
-const emit = defineEmits<{
-  (e: 'student-updated', student: Student): void
-}>()
 
 const form = reactive<EditStudentForm>({
   id: '',
@@ -60,6 +61,7 @@ const form = reactive<EditStudentForm>({
   },
 })
 
+// Form validation rules
 const rules = {
   firstName: [{ required: true, message: 'Required', trigger: 'blur' }],
   lastName: [{ required: true, message: 'Required', trigger: 'blur' }],
@@ -76,11 +78,19 @@ const rules = {
   ],
 }
 
+// Drawer/dialog mode support
 const props = defineProps<{
   mode?: 'drawer' | 'dialog'
 }>()
+
 const mode = computed(() => props.mode ?? 'drawer')
 
+// Emit updated student object to parent
+const emit = defineEmits<{
+  (e: 'student-updated', student: Student): void
+}>()
+
+// Populate form with selected student's data
 const openForm = (student: Student) => {
   form.id = student.id
   form.firstName = toTitleCase(student.firstName)
@@ -98,11 +108,13 @@ const openForm = (student: Student) => {
   visible.value = true
 }
 
+// Reset form and close modal
 const closeForm = () => {
   formRef.value?.resetFields()
   visible.value = false
 }
 
+// Validate and submit edited student data
 const submitForm = async () => {
   if (!formRef.value) return
 
@@ -137,6 +149,7 @@ const submitForm = async () => {
   })
 }
 
+// Expose openForm to parent
 defineExpose({ openForm })
 </script>
 
@@ -154,6 +167,7 @@ defineExpose({ openForm })
     :destroy-on-close="true"
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
+      <!-- Basic Info -->
       <el-form-item label="First Name" prop="firstName">
         <el-input
           v-model="form.firstName"
@@ -181,6 +195,7 @@ defineExpose({ openForm })
         />
       </el-form-item>
 
+      <!-- Birthday and Age -->
       <el-form-item label="Birthday" prop="birthday">
         <el-date-picker
           v-model="form.birthday"
@@ -196,6 +211,7 @@ defineExpose({ openForm })
         <el-input :value="age" disabled />
       </el-form-item>
 
+      <!-- Course -->
       <el-form-item label="Course" prop="course">
         <el-select v-model="form.course" placeholder="Select a course">
           <el-option
@@ -215,6 +231,7 @@ defineExpose({ openForm })
         </el-select>
       </el-form-item>
 
+      <!-- Address -->
       <el-form-item label="Street" prop="address.street">
         <el-input
           v-model="form.address.street"
@@ -256,6 +273,7 @@ defineExpose({ openForm })
         />
       </el-form-item>
 
+      <!-- Actions -->
       <el-form-item>
         <el-button type="primary" @click="submitForm">Update Student</el-button>
         <el-button @click="closeForm">Cancel</el-button>

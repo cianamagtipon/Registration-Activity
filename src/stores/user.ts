@@ -1,19 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
-interface UserState {
-  username: string
-  isLoggedIn: boolean
-  forgetClickCount: number
-}
-
 export const useUserStore = defineStore(
   'user',
   () => {
     const username = ref<string>('')
     const isLoggedIn = ref<boolean>(false)
     const forgetClickCount = ref<number>(0)
+    const fullscreenLoading = ref(false)
 
+    // Returns a reactive summary of user info
     const userInfo = computed(() => ({
       username: username.value,
       isLoggedIn: isLoggedIn.value,
@@ -49,6 +45,10 @@ export const useUserStore = defineStore(
       username.value = name
     }
 
+    const resetForgetClickCount = () => {
+      forgetClickCount.value = 0
+    }
+
     return {
       username,
       isLoggedIn,
@@ -58,12 +58,15 @@ export const useUserStore = defineStore(
       logout,
       handleForgetPassword,
       setUsername,
+      resetForgetClickCount,
+      fullscreenLoading,
     }
   },
+
   {
     persist: {
-      key: 'my-app-user',
-      storage: sessionStorage,
+      key: 'my-app-user', // local/session storage key
+      storage: sessionStorage, // uses session storage
     },
   },
 )
