@@ -6,33 +6,40 @@ TheMasterlist.vue.*/
 <script lang="ts" setup>
 import { ref, reactive, computed } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
+
 import { dateRestriction } from '@/composables/dateRestriction'
 import { entryRestriction } from '@/composables/entryRestriction'
 import { entryFormatter } from '@/composables/entryFormatter'
 import { getAge } from '@/composables/getAge'
 
+// Composables
 const { toTitleCase, formatMiddleInitial } = entryFormatter()
 const { onlyDigits, onlyLetters, abbreviateStreet } = entryRestriction()
 const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
 
+// Props and mode setup (defaults to drawer)
 const props = defineProps<{
   mode?: 'drawer' | 'dialog'
 }>()
 
 const mode = computed(() => props.mode ?? 'drawer')
 
+// Visibility state and form reference
 const visible = ref(false)
 const formRef = ref<FormInstance | null>(null)
 
+// Emit event when a student is added
 const emit = defineEmits<{
   (e: 'student-added', form: StudentForm): void
 }>()
 
+// Computed age field
 const age = computed(() =>
   form.birthday ? calculateAge(new Date(form.birthday)) : '',
 )
 
+// Form structure and validation types
 interface StudentForm {
   firstName: string
   middleInitial?: string
@@ -47,6 +54,7 @@ interface StudentForm {
   }
 }
 
+// Reactive form model
 const form = reactive<StudentForm>({
   firstName: '',
   middleInitial: '',
@@ -61,6 +69,7 @@ const form = reactive<StudentForm>({
   },
 })
 
+// Form validation rules
 const rules = {
   firstName: [{ required: true, message: 'Required', trigger: 'blur' }],
   lastName: [{ required: true, message: 'Required', trigger: 'blur' }],
@@ -77,6 +86,7 @@ const rules = {
   ],
 }
 
+// Open and close form
 const openForm = () => {
   visible.value = true
 }
@@ -86,6 +96,7 @@ const closeForm = () => {
   resetForm()
 }
 
+// Reset form fields
 const resetForm = () => {
   form.firstName = ''
   form.middleInitial = ''
@@ -100,10 +111,11 @@ const resetForm = () => {
   }
 }
 
+// Submit and emit form data after validation
 const submitForm = async () => {
   if (!formRef.value) return
 
-  // keeping format in case user doesn't blur field before submition
+  // Keeping format in case user doesn't blur field before submission
   try {
     await formRef.value.validate()
     emit('student-added', {
@@ -128,6 +140,7 @@ const submitForm = async () => {
   }
 }
 
+// Make openForm available to parent via ref
 defineExpose({ openForm })
 </script>
 
@@ -145,6 +158,7 @@ defineExpose({ openForm })
     :destroy-on-close="true"
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
+      <!-- Basic Info -->
       <el-form-item label="First Name" prop="firstName">
         <el-input
           v-model="form.firstName"
@@ -172,6 +186,7 @@ defineExpose({ openForm })
         />
       </el-form-item>
 
+      <!-- Birthday and Age -->
       <el-form-item label="Birthday" prop="birthday">
         <el-date-picker
           v-model="form.birthday"
@@ -187,6 +202,7 @@ defineExpose({ openForm })
         <el-input :value="age" readonly />
       </el-form-item>
 
+      <!-- Course Selection -->
       <el-form-item label="Course" prop="course">
         <el-select v-model="form.course" placeholder="Select a course">
           <el-option
@@ -206,6 +222,7 @@ defineExpose({ openForm })
         </el-select>
       </el-form-item>
 
+      <!-- Address -->
       <el-form-item label="Street" prop="address.street">
         <el-input
           v-model="form.address.street"
@@ -247,6 +264,7 @@ defineExpose({ openForm })
         />
       </el-form-item>
 
+      <!-- Action Buttons -->
       <el-form-item>
         <el-button type="primary" @click="submitForm">Add Student</el-button>
         <el-button @click="closeForm">Cancel</el-button>

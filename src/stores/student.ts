@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import { masterlist } from '@/assets/data/masterlist'
+
 import { getAge } from '@/composables/getAge'
 import { entryFormatter } from '@/composables/entryFormatter'
 
@@ -27,8 +28,10 @@ export interface Student {
   course: Course
 }
 
+// Raw form data before ID and age are computed
 export type StudentRaw = Omit<Student, 'id' | 'age'>
 
+// Ensure input strings are consistently formatted before storing
 function formatStudent(
   raw: Omit<Student, 'id' | 'age'>,
 ): Omit<Student, 'id' | 'age'> {
@@ -50,12 +53,18 @@ function formatStudent(
   }
 }
 
+/*---------- MAIN STORE ----------*/
+
 export const useStudentStore = defineStore('student', () => {
   const generateId = () => crypto.randomUUID()
 
+  // reactive list of students
   const students = ref<Student[]>([])
+
+  // Prevent refetching from localStorage more than once
   let initialized = false
 
+  // Load students either from localStorage or fallback to predefined masterlist
   const fetchStudents = () => {
     if (initialized) return
 
@@ -114,6 +123,7 @@ export const useStudentStore = defineStore('student', () => {
     }
   }
 
+  // Reset the list to the original masterlist
   const resetStudents = () => {
     students.value = masterlist.map((student) => {
       const formatted = formatStudent({
@@ -132,10 +142,7 @@ export const useStudentStore = defineStore('student', () => {
     })
   }
 
-  const clearStorage = () => {
-    localStorage.removeItem('students')
-  }
-
+  // Persist all changes to localStorage automatically
   watch(
     students,
     (newStudents) => {
@@ -151,6 +158,5 @@ export const useStudentStore = defineStore('student', () => {
     updateStudent,
     fetchStudents,
     resetStudents,
-    clearStorage,
   }
 })

@@ -1,4 +1,5 @@
-/*BASIC DESCRIPTION: The main view page for Dashboard. you can import the components here.*/
+/*BASIC DESCRIPTION: The main view page for Dashboard. you can import the
+components here.*/
 
 <!---------- SCRIPTS ---------->
 
@@ -9,19 +10,5 @@ import TheDashboard from '../TheDashboard.vue'
 <!---------- TEMPLATES ---------->
 
 <template>
-  <main>
-    <TheDashboard />
-  </main>
+  <TheDashboard />
 </template>
-
-<!---------- STYLES ---------->
-
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>

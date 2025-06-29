@@ -8,25 +8,38 @@ import { useRouter } from 'vue-router'
 import { User, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
 const username = ref('')
 const password = ref('')
 
 const router = useRouter()
 const userStore = useUserStore()
+const { fullscreenLoading } = storeToRefs(userStore)
 
 const login = () => {
-  const success = userStore.login(username.value, password.value)
-
-  if (success) {
-    router.push('/dashboard')
-  } else {
-    ElMessage.closeAll()
-    ElMessage({
-      message: 'Invalid username or password',
-      type: 'error',
-    })
+  if (!username.value || !password.value) {
+    ElMessage.warning('Please enter username and password')
+    return
   }
+
+  fullscreenLoading.value = true
+
+  setTimeout(() => {
+    const success = userStore.login(username.value, password.value)
+
+    fullscreenLoading.value = false
+
+    if (success) {
+      router.push('/dashboard')
+    } else {
+      ElMessage.closeAll()
+      ElMessage({
+        message: 'Invalid username or password',
+        type: 'error',
+      })
+    }
+  }, 1500)
 }
 
 const forgetPassword = () => {
@@ -83,7 +96,9 @@ const forgetPassword = () => {
         :prefix-icon="Lock"
         show-password
       />
-      <el-button type="primary" native-type="submit"> Login </el-button>
+      <el-button type="primary" class="login-button" native-type="submit">
+        Login
+      </el-button>
     </form>
 
     <div class="forgot-password">
@@ -118,40 +133,33 @@ const forgetPassword = () => {
   margin-top: 10px;
 }
 
+/* ────────────────────────
+  OVERRIDES
+ ──────────────────────── */
+
+/* INPUT (BASE) */
 ::v-deep(.el-input__wrapper) {
   background-color: transparent !important;
   border: 0.5px solid rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
   transition:
     border 0.2s ease,
     box-shadow 0.2s ease;
 }
 
-/* INPUT */
-::v-deep(.el-input__wrapper:hover) {
-  border-color: white !important;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
-}
-
-::v-deep(.el-input.is-focus .el-input__wrapper) {
-  border-color: white !important;
-  box-shadow: 0 0 12px rgba(36, 75, 197, 0.5);
-}
-
-/* ICON */
-::v-deep(.el-icon) {
-  color: white !important;
-}
-
-/* TEXT INPUT */
+/* INPUT (TEXT) */
 ::v-deep(.el-input__inner) {
   background-color: transparent !important;
   color: white !important;
 }
 
-/* PLACEHOLDER TEXT */
+/* INPUT (PLACEHOLDER) */
 ::v-deep(.el-input__inner::placeholder) {
   color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* ICON */
+::v-deep(.el-icon) {
+  color: white !important;
 }
 
 /* FORGOT PASSWORD */
@@ -170,6 +178,7 @@ const forgetPassword = () => {
   border-radius: 8px;
 }
 
+/* BUTTON HOVER */
 ::v-deep(.el-button:hover) {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);

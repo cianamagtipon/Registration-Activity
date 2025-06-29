@@ -22,11 +22,14 @@ export const entryRestriction = () => {
       court: 'Ct.',
       place: 'Pl.',
       highway: 'Hwy.',
+      building: 'Bldg.',
+      barangay: 'Brgy.',
+      corner: 'Cor.',
     }
 
     return input.replace(
-      /\b(street|avenue|boulevard|road|drive|lane|court|place|highway)\b/gi,
-      (match) => replacements[match.toLowerCase()]
+      /\b(street|avenue|boulevard|road|drive|lane|court|place|highway|building|barangay|corner)\b/gi,
+      (match) => replacements[match.toLowerCase()],
     )
   }
 

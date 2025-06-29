@@ -1,52 +1,32 @@
-/*BASIC DESCRIPTION: These are the main components of the student masterlist
-page.*/
+/*BASIC DESCRIPTION: These are the main components of the student masterlist.*/
 
 <!---------- SCRIPTS ---------->
 
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue'
-import { useStudentStore } from '@/stores/student'
+import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 
+import { useStudentStore } from '@/stores/student'
+import type { Student } from '@/stores/student'
+
 import AddStudent from './forms/AddStudent.vue'
 import EditStudent from './forms/EditStudent.vue'
 
-import type { Course, Student } from '@/stores/student'
+import { studentFilter } from '@/composables/studentFilter'
 
 const studentStore = useStudentStore()
 const { students } = storeToRefs(studentStore)
 
 const addStudentRef = ref()
 const editStudentRef = ref()
-const search = ref('')
-const filterCourse = ref('')
 
-onMounted(() => {
-  studentStore.fetchStudents()
-})
-
-const filteredStudents = computed(() => {
-  const searchTerm = search.value.trim().toLowerCase()
-  const courseFilter = (filterCourse.value ?? '').trim()
-
-  return students.value.filter((student) => {
-    const fullName =
-      `${student.firstName} ${student.middleInitial ?? ''} ${student.lastName}`.toLowerCase()
-    const address =
-      `${student.address.street} ${student.address.city} ${student.address.province}`.toLowerCase()
-    const matchesSearch =
-      !searchTerm ||
-      fullName.includes(searchTerm) ||
-      address.includes(searchTerm) ||
-      student.course.toLowerCase().includes(searchTerm)
-
-    const matchesCourse = !courseFilter || student.course === courseFilter
-
-    return matchesSearch && matchesCourse
-  })
-})
+const {
+  search,
+  courseFilter,
+  visibleStudents: filteredStudents,
+} = studentFilter(students, 'advanced')
 
 const courseNames = {
   BSCS: 'Bachelor of Science in Computer Science',
@@ -91,9 +71,7 @@ const deleteRow = (id) => {
     },
   )
     .then(() => {
-      // Only remove the student after confirmation
       studentStore.removeStudent(id)
-
       ElMessage({
         type: 'success',
         message: 'Delete completed',
@@ -107,23 +85,24 @@ const deleteRow = (id) => {
     })
 }
 
-const resetData = () => {
-  studentStore.resetStudents()
-}
+onMounted(() => {
+  studentStore.fetchStudents()
+})
 </script>
 
 <!---------- TEMPLATES ---------->
 
 <template>
-  <div class="table-container">
-    <div class="table-header">
+  <div class="masterlist-container">
+    <div class="actions">
+      <!-- FILTERS -->
       <div class="filter-column">
         <div class="table-filters">
-          <!-- Search first -->
+          <!-- Search -->
           <el-input
             class="search-bar"
             v-model="search"
-            placeholder="Search Name"
+            placeholder=" Find Name or Address"
             clearable
           >
             <template #prefix>
@@ -131,12 +110,13 @@ const resetData = () => {
             </template>
           </el-input>
 
-          <!-- Course filter second -->
+          <!-- Course Filter -->
           <el-select
-            v-model="filterCourse"
+            v-model="courseFilter"
             placeholder="Filter by Course"
             clearable
             class="course-select"
+            @clear="courseFilter = ''"
           >
             <el-option label="BSCS" value="BSCS" />
             <el-option label="BSIT" value="BSIT" />
@@ -147,7 +127,7 @@ const resetData = () => {
         </div>
       </div>
 
-      <!-- Add Student button -->
+      <!-- Add Student -->
       <div class="button-column">
         <el-button class="add-button" @click="addStudentRef.openForm()">
           Add Student
@@ -155,6 +135,7 @@ const resetData = () => {
       </div>
     </div>
 
+    <!-- STUDENT TABLE -->
     <el-table :data="filteredStudents" max-height="410px" class="student-table">
       <el-table-column
         prop="lastName"
@@ -187,7 +168,7 @@ const resetData = () => {
       <el-table-column prop="age" label="Age" min-width="90" align="center" />
       <el-table-column prop="address" label="Address" min-width="250">
         <template #default="scope">
-          {{ scope.row.address.street }}, {{ scope.row.address.city }}
+          {{ scope.row.address.street }}, {{ scope.row.address.city }},
           {{ scope.row.address.province }}. {{ scope.row.address.zipCode }}.
         </template>
       </el-table-column>
@@ -212,7 +193,6 @@ const resetData = () => {
           >
             Edit
           </el-button>
-
           <el-button
             class="remove-button"
             link
@@ -227,6 +207,7 @@ const resetData = () => {
     </el-table>
   </div>
 
+  <!-- DRAWERS -->
   <EditStudent ref="editStudentRef" @student-updated="handleStudentUpdated" />
   <AddStudent ref="addStudentRef" @student-added="handleStudentAdded" />
 </template>
@@ -234,30 +215,23 @@ const resetData = () => {
 <!---------- STYLES ---------->
 
 <style scoped>
-.table-container {
+.masterlist-container {
   max-width: 1440px;
   width: 80vw;
   margin: 0 auto;
 }
 
-.table-header {
+/* ────────────────────────
+  ACTIONS
+ ──────────────────────── */
+
+.actions {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
-  margin-bottom: 10px;
   flex-wrap: wrap;
   gap: 10px;
-}
-
-.filter-column {
-  flex: 1 1 60%;
-}
-
-.button-column {
-  flex: 1 1 30%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: right;
+  margin-bottom: 10px;
 }
 
 .table-filters {
@@ -267,25 +241,30 @@ const resetData = () => {
   min-width: 250px;
 }
 
-.search-bar,
-.course-select {
-  width: 200px;
-  min-width: 150px;
+/* LEFT SIDE (FILTERS) */
+.filter-column {
+  flex: 1 1 60%;
 }
 
-.student-table {
-  border-radius: 12px;
-  margin-top: 30px;
-  overflow: hidden;
-  border: 1px solid #ebeef5;
-  box-shadow:
-    0px 0px 20px rgba(100, 150, 255, 0.25),
-    0 1px 6px rgba(0, 0, 0, 0.08);
+/* RIGHT SIDE (ADD BUTTON) */
+.button-column {
+  flex: 1 1 30%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .add-button {
   white-space: nowrap;
   align-self: flex-end;
+}
+
+/* ===== FILTER ELEMENTS ===== */
+
+.search-bar,
+.course-select {
+  width: 200px;
+  min-width: 150px;
 }
 
 @media (max-width: 600px) {
@@ -300,6 +279,24 @@ const resetData = () => {
     margin-top: 10px;
   }
 }
+
+/* ────────────────────────
+  TABLE
+ ──────────────────────── */
+
+.student-table {
+  border-radius: 12px;
+  margin-top: 30px;
+  overflow: hidden;
+  border: 1px solid #ebeef5;
+  box-shadow:
+    0px 0px 20px rgba(100, 150, 255, 0.25),
+    0 1px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ────────────────────────
+  OVERRIDES
+ ──────────────────────── */
 
 ::v-deep(.search-bar .el-input__wrapper) {
   border-radius: 8px;
@@ -317,20 +314,22 @@ const resetData = () => {
   transition: all 0.3s ease;
 }
 
+/* ALL BUTTONS THAT ARE NOT EDIT AND REMOVE */
 ::v-deep(.el-button:not(.edit-button):not(.remove-button)) {
+  border-radius: 8px;
   box-shadow:
     0px 0px 20px rgba(100, 150, 255, 0.25),
     0 1px 6px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  border-radius: 8px;
 }
 
+/* HOVER FOR BUTTONS THAT ARE NOT EDIT AND REMOVE */
 ::v-deep(.el-button:not(.edit-button):not(.remove-button):hover) {
   border: none;
+  transform: translateY(2px);
   box-shadow:
     0 4px 12px rgba(36, 75, 197, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(2px);
   transition: all 0.2s ease-in-out;
 }
 </style>
