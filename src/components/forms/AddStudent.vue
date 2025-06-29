@@ -184,7 +184,7 @@ defineExpose({ openForm })
       </el-form-item>
 
       <el-form-item label="Age">
-        <el-input :value="age" disabled />
+        <el-input :value="age" readonly />
       </el-form-item>
 
       <el-form-item label="Course" prop="course">

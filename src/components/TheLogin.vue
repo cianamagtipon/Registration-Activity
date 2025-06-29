@@ -120,8 +120,11 @@ const forgetPassword = () => {
 
 ::v-deep(.el-input__wrapper) {
   background-color: transparent !important;
-  border: 1px white;
+  border: 0.5px solid rgba(255, 255, 255, 0.7);
   border-radius: 8px;
+  transition:
+    border 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* INPUT */
