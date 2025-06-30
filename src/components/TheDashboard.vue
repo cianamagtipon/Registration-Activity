@@ -164,14 +164,14 @@ onUnmounted(() => {
             >
               <template #header>
                 <div class="card-header">
-                  <span>
-                    <el-avatar>
+                  <span class="avatar-name">
+                    <el-avatar class="large-avatar">
                       {{
                         student.firstName.charAt(0).toUpperCase() +
                         student.lastName.charAt(0).toUpperCase()
                       }}
                     </el-avatar>
-                    <strong>
+                    <strong class="student-name">
                       {{ student.firstName }} {{ student.middleInitial }}
                       {{ student.lastName }}
                     </strong>
@@ -289,10 +289,6 @@ onUnmounted(() => {
     0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
-.icon-container {
-  padding: 8px;
-}
-
 .empty {
   height: 150px;
 }
@@ -332,6 +328,25 @@ onUnmounted(() => {
   color: white;
   font-weight: bold;
   border: none;
+}
+
+.avatar-name {
+  display: flex;
+  align-items: center;
+}
+
+.large-avatar {
+  width: 48px;
+  height: 48px;
+  font-size: 20px;
+}
+
+.student-name {
+  font-size: 20px;
+}
+
+.icon-container {
+  padding: 8px;
 }
 
 .card-text {
