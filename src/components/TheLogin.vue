@@ -19,6 +19,7 @@ const { fullscreenLoading } = storeToRefs(userStore)
 
 const login = () => {
   if (!username.value || !password.value) {
+    ElMessage.closeAll()
     ElMessage.warning('Please enter username and password')
     return
   }
