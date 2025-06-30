@@ -267,19 +267,6 @@ onMounted(() => {
   min-width: 150px;
 }
 
-@media (max-width: 600px) {
-  .search-bar,
-  .course-select {
-    width: 200px;
-  }
-
-  .button-column {
-    width: 100%;
-    justify-content: flex-end;
-    margin-top: 10px;
-  }
-}
-
 /* ────────────────────────
   TABLE
  ──────────────────────── */
@@ -331,5 +318,30 @@ onMounted(() => {
     0 4px 12px rgba(36, 75, 197, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease-in-out;
+}
+
+/* ────────────────────────
+  MEDIA
+ ──────────────────────── */
+
+@media (max-width: 600px) {
+  .search-bar,
+  .course-select {
+    width: 200px;
+  }
+
+  .button-column {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 465px) {
+  .search-bar,
+  .course-select,
+  .add-button {
+    width: 100%;
+  }
 }
 </style>
