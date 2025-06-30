@@ -19,6 +19,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/masterlist',
+      name: 'masterlist',
+      component: () => import('../components/views/MasterlistView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       beforeEnter: (to, from, next) => {
