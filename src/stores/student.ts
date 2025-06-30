@@ -98,7 +98,7 @@ export const useStudentStore = defineStore('student', () => {
 
   const addStudent = (student: StudentRaw) => {
     const formatted = formatStudent(student)
-    students.value.push({
+    students.value.unshift({
       ...formatted,
       id: generateId(),
       age: calculateAge(formatted.birthDate),
