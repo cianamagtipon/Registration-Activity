@@ -112,13 +112,14 @@ const forgetPassword = () => {
 
 <style scoped>
 .login-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 2rem;
-  width: 70%;
-  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40vw;
+  max-width: 900px;
+  height: 90vh;
+  margin: 0 auto;
 }
 
 .login,
@@ -126,9 +127,11 @@ const forgetPassword = () => {
 .login button {
   display: block;
   width: 100%;
+  z-index: 10;
 }
 
 .forgot-password {
+  width: 100%;
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
@@ -183,5 +186,46 @@ const forgetPassword = () => {
 ::v-deep(.el-button:hover) {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
+}
+
+/* ────────────────────────
+  MEDIA
+ ──────────────────────── */
+
+@media (max-width: 600px) {
+  .login-container {
+    width: 70vw;
+  }
+}
+
+@media (min-width: 768px) {
+  ::v-deep(.el-input__inner::placeholder) {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .login input,
+  .login button {
+    font-size: 20px;
+  }
+
+  ::v-deep(.el-input__wrapper) {
+    height: 50px;
+  }
+
+  ::v-deep(.el-input__inner::placeholder) {
+    font-size: 20px;
+  }
+
+  ::v-deep(.el-button) {
+    font-size: 18px;
+    padding: 0 28px;
+    height: 50px;
+  }
+
+  ::v-deep(.el-link) {
+    font-size: 20px !important;
+  }
 }
 </style>
