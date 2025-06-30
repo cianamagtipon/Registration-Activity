@@ -9,7 +9,7 @@ export function getAge() {
       age--
     }
 
-    return age
+    return Math.min(age, 100)
   }
 
   return { calculateAge }
