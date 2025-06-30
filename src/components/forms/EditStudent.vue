@@ -4,7 +4,7 @@ TheMasterlist.vue.*/
 <!---------- SCRIPTS ---------->
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 
 import { getAge } from '@/composables/getAge'
@@ -85,6 +85,21 @@ const props = defineProps<{
 
 const mode = computed(() => props.mode ?? 'drawer')
 
+// Responsive drawer width
+const drawerSize = ref(getDrawerSize())
+
+function getDrawerSize() {
+  return window.innerWidth <= 768 ? '100%' : '40%'
+}
+
+onMounted(() => {
+  window.addEventListener('resize', () => {
+    if (mode.value === 'drawer') {
+      drawerSize.value = getDrawerSize()
+    }
+  })
+})
+
 // Emit updated student object to parent
 const emit = defineEmits<{
   (e: 'student-updated', student: Student): void
@@ -160,7 +175,7 @@ defineExpose({ openForm })
     :is="mode === 'drawer' ? 'el-drawer' : 'el-dialog'"
     v-model="visible"
     title="Update Student Information"
-    :size="mode === 'drawer' ? '30%' : undefined"
+    :size="mode === 'drawer' ? drawerSize : undefined"
     :width="mode === 'dialog' ? '600px' : undefined"
     :with-header="true"
     :custom-class="mode === 'drawer' ? 'student-drawer' : 'student-dialog'"
@@ -288,5 +303,12 @@ defineExpose({ openForm })
 .student-drawer,
 .student-dialog {
   padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .student-drawer {
+    padding: 20px;
+    width: 100%;
+  }
 }
 </style>

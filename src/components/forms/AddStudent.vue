@@ -4,7 +4,7 @@ TheMasterlist.vue.*/
 <!---------- SCRIPTS ---------->
 
 <script lang="ts" setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 
 import { dateRestriction } from '@/composables/dateRestriction'
@@ -142,6 +142,21 @@ const submitForm = async () => {
 
 // Make openForm available to parent via ref
 defineExpose({ openForm })
+
+// Responsive drawer width
+const drawerSize = ref(getDrawerSize())
+
+function getDrawerSize() {
+  return window.innerWidth <= 768 ? '100%' : '40%'
+}
+
+onMounted(() => {
+  window.addEventListener('resize', () => {
+    if (mode.value === 'drawer') {
+      drawerSize.value = getDrawerSize()
+    }
+  })
+})
 </script>
 
 <!---------- TEMPLATES ---------->
@@ -151,7 +166,7 @@ defineExpose({ openForm })
     :is="mode === 'drawer' ? 'el-drawer' : 'el-dialog'"
     v-model="visible"
     title="Add New Student"
-    :size="mode === 'drawer' ? '30%' : undefined"
+    :size="mode === 'drawer' ? drawerSize : undefined"
     :width="mode === 'dialog' ? '600px' : undefined"
     :with-header="true"
     :custom-class="mode === 'drawer' ? 'student-drawer' : 'student-dialog'"
