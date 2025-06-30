@@ -17,7 +17,8 @@ import type { Course } from '@/stores/student'
 
 // Composables
 const { toTitleCase, formatMiddleInitial } = entryFormatter()
-const { onlyDigits, onlyLetters, abbreviateStreet } = entryRestriction()
+const { onlyDigits, onlyLetters, isOnlySpaces, abbreviateStreet } =
+  entryRestriction()
 const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
 
@@ -29,6 +30,18 @@ const formRef = ref<FormInstance | null>(null)
 const age = computed(() =>
   form.birthday ? calculateAge(new Date(form.birthday)) : '',
 )
+
+const validateEntry = (
+  _: any,
+  value: string,
+  callback: (error?: Error) => void,
+) => {
+  if (isOnlySpaces(value)) {
+    callback(new Error('Input cannot be empty or just spaces.'))
+  } else {
+    callback()
+  }
+}
 
 // Reactive form state
 interface EditStudentForm {
@@ -63,14 +76,27 @@ const form = reactive<EditStudentForm>({
 
 // Form validation rules
 const rules = {
-  firstName: [{ required: true, message: 'Required', trigger: 'blur' }],
-  lastName: [{ required: true, message: 'Required', trigger: 'blur' }],
+  firstName: [
+    { required: true, message: 'Required', trigger: 'blur' },
+    { validator: validateEntry, trigger: 'blur' },
+  ],
+  lastName: [
+    { required: true, message: 'Required', trigger: 'blur' },
+    { validator: validateEntry, trigger: 'blur' },
+  ],
   birthday: [{ required: true, message: 'Select a date', trigger: 'change' }],
   course: [{ required: true, message: 'Required', trigger: 'change' }],
-  'address.street': [{ required: true, message: 'Required', trigger: 'blur' }],
-  'address.city': [{ required: true, message: 'Required', trigger: 'blur' }],
+  'address.street': [
+    { required: true, message: 'Required', trigger: 'blur' },
+    { validator: validateEntry, trigger: 'blur' },
+  ],
+  'address.city': [
+    { required: true, message: 'Required', trigger: 'blur' },
+    { validator: validateEntry, trigger: 'blur' },
+  ],
   'address.province': [
     { required: true, message: 'Required', trigger: 'blur' },
+    { validator: validateEntry, trigger: 'blur' },
   ],
   'address.zipCode': [
     { required: true, message: 'Required', trigger: 'blur' },

@@ -33,9 +33,14 @@ export const entryRestriction = () => {
     )
   }
 
+  const isOnlySpaces = (input: string): boolean => {
+    return input.trim() === ''
+  }
+
   return {
     onlyDigits,
     onlyLetters,
     abbreviateStreet,
+    isOnlySpaces,
   }
 }
