@@ -37,10 +37,39 @@ export const entryRestriction = () => {
     return input.trim() === ''
   }
 
+  const normalizeSpaces = (input: string): string => {
+    return input.replace(/\s+/g, ' ').trim()
+  }
+
+  const onlyOneSpace = (event: KeyboardEvent, value: string) => {
+    // Disallow leading space
+    if (event.key === ' ' && value === '') {
+      event.preventDefault()
+    }
+
+    // Disallow consecutive spaces
+    const lastChar = value[value.length - 1]
+    if (event.key === ' ' && lastChar === ' ') {
+      event.preventDefault()
+    }
+  }
+
+  const removeSymbols = (input: string): string => {
+    return input.replace(/[^a-zA-Z0-9\s]/g, '')
+  }
+
+  const preventPaste = (event: ClipboardEvent) => {
+    event.preventDefault()
+  }
+
   return {
     onlyDigits,
     onlyLetters,
     abbreviateStreet,
     isOnlySpaces,
+    normalizeSpaces,
+    onlyOneSpace,
+    removeSymbols,
+    preventPaste,
   }
 }

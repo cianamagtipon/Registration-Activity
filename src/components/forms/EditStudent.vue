@@ -17,8 +17,15 @@ import type { Course } from '@/stores/student'
 
 // Composables
 const { toTitleCase, formatMiddleInitial } = entryFormatter()
-const { onlyDigits, onlyLetters, isOnlySpaces, abbreviateStreet } =
-  entryRestriction()
+const {
+  onlyDigits,
+  onlyLetters,
+  abbreviateStreet,
+  isOnlySpaces,
+  onlyOneSpace,
+  preventPaste,
+} = entryRestriction()
+
 const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
 
@@ -200,7 +207,7 @@ defineExpose({ openForm })
   <component
     :is="mode === 'drawer' ? 'el-drawer' : 'el-dialog'"
     v-model="visible"
-    title="Update Student Information"
+    title="Add New Student"
     :size="mode === 'drawer' ? drawerSize : undefined"
     :width="mode === 'dialog' ? '600px' : undefined"
     :with-header="true"
@@ -214,6 +221,8 @@ defineExpose({ openForm })
           v-model="form.firstName"
           maxlength="50"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.firstName)"
+          @paste="preventPaste"
           @blur="form.firstName = toTitleCase(form.firstName)"
         />
       </el-form-item>
@@ -223,6 +232,8 @@ defineExpose({ openForm })
           v-model="form.middleInitial"
           maxlength="1"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.middleInitial)"
+          @paste="preventPaste"
           @blur="form.middleInitial = formatMiddleInitial(form.middleInitial)"
         />
       </el-form-item>
@@ -232,6 +243,8 @@ defineExpose({ openForm })
           v-model="form.lastName"
           maxlength="50"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.lastName)"
+          @paste="preventPaste"
           @blur="form.lastName = toTitleCase(form.lastName)"
         />
       </el-form-item>
@@ -252,7 +265,7 @@ defineExpose({ openForm })
         <el-input :value="age" readonly />
       </el-form-item>
 
-      <!-- Course -->
+      <!-- Course Selection -->
       <el-form-item label="Course" prop="course">
         <el-select v-model="form.course" placeholder="Select a course">
           <el-option
@@ -277,6 +290,8 @@ defineExpose({ openForm })
         <el-input
           v-model="form.address.street"
           maxlength="250"
+          @keydown="(e) => onlyOneSpace(e, form.address.street)"
+          @paste="preventPaste"
           @blur="
             form.address.street = toTitleCase(
               abbreviateStreet(form.address.street),
@@ -290,6 +305,8 @@ defineExpose({ openForm })
           v-model="form.address.city"
           maxlength="250"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.address.city)"
+          @paste="preventPaste"
           @blur="form.address.city = toTitleCase(form.address.city)"
         />
       </el-form-item>
@@ -299,6 +316,8 @@ defineExpose({ openForm })
           v-model="form.address.province"
           maxlength="250"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.address.province)"
+          @paste="preventPaste"
           @blur="form.address.province = toTitleCase(form.address.province)"
         />
       </el-form-item>
@@ -311,12 +330,14 @@ defineExpose({ openForm })
           maxlength="4"
           pattern="[0-9]*"
           @keypress="onlyDigits"
+          @keydown="(e) => onlyOneSpace(e, form.address.zipCode)"
+          @paste="preventPaste"
         />
       </el-form-item>
 
-      <!-- Actions -->
+      <!-- Action Buttons -->
       <el-form-item>
-        <el-button type="primary" @click="submitForm">Update Student</el-button>
+        <el-button type="primary" @click="submitForm">Add Student</el-button>
         <el-button @click="closeForm">Cancel</el-button>
       </el-form-item>
     </el-form>

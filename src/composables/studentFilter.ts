@@ -1,5 +1,8 @@
 import { ref, computed, Ref } from 'vue'
 import type { Student } from '@/stores/student'
+import { entryRestriction } from '@/composables/entryRestriction'
+
+const { normalizeSpaces, removeSymbols } = entryRestriction()
 
 // Filter mode
 type FilterMode = 'simple' | 'advanced'
@@ -22,22 +25,31 @@ export function studentFilter(
   const count = ref<number | null>(10)
 
   const visibleStudents = computed(() => {
-    const searchTerm = search.value.trim().toLowerCase()
+    const searchTerm = normalizeSpaces(search.value.trim().toLowerCase())
     const course = courseFilter.value.trim()
 
     // Filter by name and address (if advanced)
     let results = students.value.filter((student) => {
-      const fullName =
-        `${student.firstName} ${student.middleInitial ?? ''} ${student.lastName}`.toLowerCase()
+      const fullName = {
+        standard:
+          `${student.firstName} ${student.middleInitial ?? ''} ${student.lastName}`.toLowerCase(),
+        standardRaw: removeSymbols(
+          `${student.firstName} ${student.middleInitial ?? ''} ${student.lastName}`,
+        ).toLowerCase(),
+        lastNameFirst:
+          `${student.lastName} ${student.firstName} ${student.middleInitial ?? ''}`.toLowerCase(),
+      }
 
       const matchesSearch =
-        !searchTerm || // If search is empty, match all
-        fullName.includes(searchTerm) || // Match by name
+        !searchTerm ||
+        Object.values(fullName).some((name) =>
+          normalizeSpaces(name).includes(searchTerm),
+        ) ||
         (mode === 'advanced' &&
           student.address &&
-          `${student.address.street} ${student.address.city} ${student.address.province}`
-            .toLowerCase()
-            .includes(searchTerm))
+          normalizeSpaces(
+            `${student.address.street} ${student.address.city} ${student.address.province} ${student.address.zipCode}`.toLowerCase(),
+          ).includes(searchTerm))
 
       const matchesCourse = !course || student.course === course
 

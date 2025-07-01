@@ -14,8 +14,15 @@ import { getAge } from '@/composables/getAge'
 
 // Composables
 const { toTitleCase, formatMiddleInitial } = entryFormatter()
-const { onlyDigits, onlyLetters, isOnlySpaces, abbreviateStreet } =
-  entryRestriction()
+const {
+  onlyDigits,
+  onlyLetters,
+  abbreviateStreet,
+  isOnlySpaces,
+  onlyOneSpace,
+  preventPaste,
+} = entryRestriction()
+
 const { tooYoung, defaultDate } = dateRestriction()
 const { calculateAge } = getAge()
 
@@ -205,6 +212,8 @@ onMounted(() => {
           v-model="form.firstName"
           maxlength="50"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.firstName)"
+          @paste="preventPaste"
           @blur="form.firstName = toTitleCase(form.firstName)"
         />
       </el-form-item>
@@ -214,6 +223,8 @@ onMounted(() => {
           v-model="form.middleInitial"
           maxlength="1"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.middleInitial)"
+          @paste="preventPaste"
           @blur="form.middleInitial = formatMiddleInitial(form.middleInitial)"
         />
       </el-form-item>
@@ -223,6 +234,8 @@ onMounted(() => {
           v-model="form.lastName"
           maxlength="50"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.lastName)"
+          @paste="preventPaste"
           @blur="form.lastName = toTitleCase(form.lastName)"
         />
       </el-form-item>
@@ -268,6 +281,8 @@ onMounted(() => {
         <el-input
           v-model="form.address.street"
           maxlength="250"
+          @keydown="(e) => onlyOneSpace(e, form.address.street)"
+          @paste="preventPaste"
           @blur="
             form.address.street = toTitleCase(
               abbreviateStreet(form.address.street),
@@ -281,6 +296,8 @@ onMounted(() => {
           v-model="form.address.city"
           maxlength="250"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.address.city)"
+          @paste="preventPaste"
           @blur="form.address.city = toTitleCase(form.address.city)"
         />
       </el-form-item>
@@ -290,6 +307,8 @@ onMounted(() => {
           v-model="form.address.province"
           maxlength="250"
           @keypress="onlyLetters"
+          @keydown="(e) => onlyOneSpace(e, form.address.province)"
+          @paste="preventPaste"
           @blur="form.address.province = toTitleCase(form.address.province)"
         />
       </el-form-item>
@@ -302,6 +321,8 @@ onMounted(() => {
           maxlength="4"
           pattern="[0-9]*"
           @keypress="onlyDigits"
+          @keydown="(e) => onlyOneSpace(e, form.address.zipCode)"
+          @paste="preventPaste"
         />
       </el-form-item>
 
