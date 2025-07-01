@@ -1,3 +1,7 @@
+## Front-End Registration Activity
+
+(Still in progress) View, add, and edit student registrations.
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
@@ -18,14 +22,13 @@ npm install
 npm run dev
 ```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
 ```
+
+### Login Credentials
+
+admin: ```admin```
+password: ```1234```
