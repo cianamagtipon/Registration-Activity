@@ -1,6 +1,6 @@
 ## Front-End Registration Activity
 
-(NOTE THAT BOTH CODE AND README ARE WORKS IN PROGRESS) View, add, and edit student registrations.
+(Note that both the program and the README are works in progress) View, add, and edit student registrations.
 
 ## Recommended IDE Setup
 
