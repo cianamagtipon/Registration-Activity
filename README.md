@@ -30,5 +30,7 @@ npm run lint
 
 ### Login Credentials
 
-admin: ```admin```
-password: ```1234```
+```sh
+admin: admin
+password: 1234
+```
