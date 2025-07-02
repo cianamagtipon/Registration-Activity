@@ -66,7 +66,7 @@ export const useUserStore = defineStore(
   {
     persist: {
       key: 'my-app-user', // local/session storage key
-      storage: sessionStorage, // uses session storage
+      storage: localStorage, // uses local storage
     },
   },
 )
