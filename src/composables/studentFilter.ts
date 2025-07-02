@@ -40,16 +40,32 @@ export function studentFilter(
           `${student.lastName} ${student.firstName} ${student.middleInitial ?? ''}`.toLowerCase(),
       }
 
+      const fullAddress = {
+        formatted: normalizeSpaces(
+          `${student.address.street} ${student.address.city} ${student.address.province} ${student.address.zipCode}`.toLowerCase(),
+        ),
+        stripped: normalizeSpaces(
+          removeSymbols(
+            `${student.address.street} ${student.address.city} ${student.address.province} ${student.address.zipCode}`,
+          ).toLowerCase(),
+        ),
+        formattedWithComma: normalizeSpaces(
+          `${student.address.street}, ${student.address.city}, ${student.address.province}, ${student.address.zipCode}`.toLowerCase(),
+        ),
+        strippedWithComma: normalizeSpaces(
+          removeSymbols(
+            `${student.address.street}, ${student.address.city}, ${student.address.province}, ${student.address.zipCode}`,
+          ).toLowerCase(),
+        ),
+      }
+
       const matchesSearch =
         !searchTerm ||
         Object.values(fullName).some((name) =>
           normalizeSpaces(name).includes(searchTerm),
         ) ||
         (mode === 'advanced' &&
-          student.address &&
-          normalizeSpaces(
-            `${student.address.street} ${student.address.city} ${student.address.province} ${student.address.zipCode}`.toLowerCase(),
-          ).includes(searchTerm))
+          Object.values(fullAddress).some((addr) => addr.includes(searchTerm)))
 
       const matchesCourse = !course || student.course === course
 
