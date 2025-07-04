@@ -1,6 +1,6 @@
-# .
+## Front-End Registration Activity
 
-This template should help get you started developing with Vue 3 in Vite.
+(Note that both the program and the README are works in progress) View, add, and edit student registrations.
 
 ## Recommended IDE Setup
 
@@ -22,14 +22,15 @@ npm install
 npm run dev
 ```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
+```
+
+### Login Credentials
+
+```sh
+admin: admin
+password: 1234
 ```
