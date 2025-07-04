@@ -13,6 +13,10 @@ const router = createRouter({
       component: LoginView,
     },
     {
+      path: '/login',
+      redirect: '/',
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../components/views/DashboardView.vue'),
@@ -25,6 +29,11 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/pagenotfound',
+      name: 'error',
+      component: () => import('../components/views/ErrorView.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       beforeEnter: (to, from, next) => {
@@ -32,9 +41,9 @@ const router = createRouter({
         const { isLoggedIn } = storeToRefs(userStore)
 
         if (isLoggedIn.value) {
-          next({ name: 'dashboard' })
+          next({ name: 'error' })
         } else {
-          next({ name: 'login' })
+          next({ name: 'error' })
         }
       },
     },
@@ -46,7 +55,7 @@ router.beforeEach((to, from, next) => {
   const { isLoggedIn } = storeToRefs(userStore)
 
   if (to.meta.requiresAuth && !isLoggedIn.value) {
-    next({ name: 'login' })
+    next({ name: 'error' })
   } else if (to.name === 'login' && isLoggedIn.value) {
     next({ name: 'dashboard' })
   } else {

@@ -93,7 +93,10 @@ onUnmounted(() => {
 
 <template>
   <div v-loading.fullscreen.lock="fullscreenLoading">
-    <div v-if="route.name !== 'login'" class="table-header">
+    <div
+      v-if="route.name !== 'login' && route.name !== 'error'"
+      class="table-header"
+    >
       <el-menu
         :default-active="activeIndex"
         active-text-color="#00b1b1"

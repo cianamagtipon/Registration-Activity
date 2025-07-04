@@ -1,12 +1,12 @@
 export const entryRestriction = () => {
   // Allow only digits (0-9)
   const onlyDigits = (event: KeyboardEvent, value: string) => {
-    if (!/[0-9]/.test(event.key)) {
+    // (Additional condition for zip) Doesn't start with 0
+    if (event.key === '0' && value === '') {
       event.preventDefault()
     }
 
-    // (Additional condition for zip) Doesn't start with 0
-    if (event.key === '0' && value === '') {
+    if (!/[0-9]/.test(event.key)) {
       event.preventDefault()
     }
   }
@@ -14,6 +14,12 @@ export const entryRestriction = () => {
   // Allow only letters, space, period, apostrophe, and hyphen
   const onlyLetters = (event: KeyboardEvent) => {
     if (!/[a-zA-Z\s.'-]/.test(event.key)) {
+      event.preventDefault()
+    }
+  }
+
+  const onlyAlphaNumeric = (event: KeyboardEvent) => {
+    if (!/[0-9a-zA-Z\s.'-]/.test(event.key)) {
       event.preventDefault()
     }
   }
@@ -97,6 +103,7 @@ export const entryRestriction = () => {
   return {
     onlyDigits,
     onlyLetters,
+    onlyAlphaNumeric,
     onlyMiddleInitial,
     abbreviateStreet,
     isOnlySpaces,

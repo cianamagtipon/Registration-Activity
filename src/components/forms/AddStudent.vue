@@ -17,6 +17,7 @@ const { toTitleCase, formatMiddleInitial } = entryFormatter()
 const {
   onlyDigits,
   onlyLetters,
+  onlyAlphaNumeric,
   onlyMiddleInitial,
   abbreviateStreet,
   isOnlySpaces,
@@ -58,6 +59,20 @@ const validateEntry = (
     callback(new Error('Input cannot be empty or just spaces.'))
   } else if (isInvalidInput(value)) {
     callback(new Error('Please enter valid characters.'))
+  } else {
+    callback()
+  }
+}
+
+const validateZipCode = (
+  rule: any,
+  value: string,
+  callback: (error?: string | Error) => void,
+) => {
+  if (!/^[1-9][0-9]{3}$/.test(value)) {
+    callback(
+      new Error('Must be 4 digits, numerical, and does not start with 0.'),
+    )
   } else {
     callback()
   }
@@ -119,7 +134,7 @@ const rules = {
   ],
   'address.zipCode': [
     { required: true, message: 'Required', trigger: 'blur' },
-    { min: 4, max: 4, message: 'Zip Code must be 4 digits', trigger: 'blur' },
+    { validator: validateZipCode, trigger: 'blur' },
   ],
 }
 
@@ -285,6 +300,7 @@ onMounted(() => {
         <el-input
           v-model="form.address.street"
           maxlength="250"
+          @keypress="onlyAlphaNumeric"
           @keydown="(e) => onlyOneSpace(e, form.address.street)"
           @paste="preventPaste"
           @blur="
@@ -324,7 +340,7 @@ onMounted(() => {
           inputmode="numeric"
           maxlength="4"
           pattern="[0-9]*"
-          @keypress="onlyDigits"
+          @keypress="(e) => onlyDigits(e, form.address.zipCode)"
           @keydown="(e) => onlyOneSpace(e, form.address.zipCode)"
           @paste="preventPaste"
         />
