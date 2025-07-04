@@ -224,7 +224,7 @@ defineExpose({ openForm })
         <el-input
           v-model="form.firstName"
           maxlength="50"
-          @keypress="onlyMiddleInitial"
+          @keypress="onlyLetters"
           @keydown="(e) => onlyOneSpace(e, form.firstName)"
           @paste="preventPaste"
           @blur="form.firstName = toTitleCase(form.firstName)"
@@ -235,7 +235,7 @@ defineExpose({ openForm })
         <el-input
           v-model="form.middleInitial"
           maxlength="1"
-          @keypress="onlyLetters"
+          @keypress="onlyMiddleInitial"
           @keydown="(e) => onlyOneSpace(e, form.middleInitial)"
           @paste="preventPaste"
           @blur="form.middleInitial = formatMiddleInitial(form.middleInitial)"
