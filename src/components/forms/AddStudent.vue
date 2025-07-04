@@ -17,10 +17,12 @@ const { toTitleCase, formatMiddleInitial } = entryFormatter()
 const {
   onlyDigits,
   onlyLetters,
+  onlyMiddleInitial,
   abbreviateStreet,
   isOnlySpaces,
   onlyOneSpace,
   preventPaste,
+  isInvalidInput,
 } = entryRestriction()
 
 const { tooYoung, defaultDate } = dateRestriction()
@@ -54,6 +56,8 @@ const validateEntry = (
 ) => {
   if (isOnlySpaces(value)) {
     callback(new Error('Input cannot be empty or just spaces.'))
+  } else if (isInvalidInput(value)) {
+    callback(new Error('Please enter valid characters.'))
   } else {
     callback()
   }
@@ -222,7 +226,7 @@ onMounted(() => {
         <el-input
           v-model="form.middleInitial"
           maxlength="1"
-          @keypress="onlyLetters"
+          @keypress="onlyMiddleInitial"
           @keydown="(e) => onlyOneSpace(e, form.middleInitial)"
           @paste="preventPaste"
           @blur="form.middleInitial = formatMiddleInitial(form.middleInitial)"
