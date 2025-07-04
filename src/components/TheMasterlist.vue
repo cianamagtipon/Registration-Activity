@@ -291,6 +291,8 @@ onMounted(() => {
     0 4px 12px rgba(36, 75, 197, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  height: 38px;
+  padding: 0 11px;
 }
 
 ::v-deep(.course-select .el-select__wrapper) {
@@ -299,6 +301,8 @@ onMounted(() => {
     0 4px 12px rgba(36, 75, 197, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  height: 38px;
+  padding: 0 11px;
 }
 
 /* ALL BUTTONS THAT ARE NOT EDIT AND REMOVE */
@@ -308,6 +312,8 @@ onMounted(() => {
     0px 0px 20px rgba(100, 150, 255, 0.25),
     0 1px 6px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  height: 38px;
+  padding: 0 11px;
 }
 
 /* HOVER FOR BUTTONS THAT ARE NOT EDIT AND REMOVE */

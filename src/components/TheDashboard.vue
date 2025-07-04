@@ -414,9 +414,7 @@ onUnmounted(() => {
 
 .name-search,
 .course-select {
-  height: 30px;
-  min-height: 30px;
-  max-height: 30px;
+  max-height: 40px;
 }
 
 /* ===== INFINITE SCROLL ===== */
@@ -486,6 +484,8 @@ onUnmounted(() => {
     0 4px 12px rgba(36, 75, 197, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  height: 38px;
+  padding: 0 11px;
 }
 
 /* ────────────────────────

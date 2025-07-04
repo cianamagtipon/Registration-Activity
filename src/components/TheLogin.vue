@@ -128,6 +128,15 @@ const forgetPassword = () => {
   width: 100%;
 }
 
+.login-button {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+
 .forgot-password {
   display: flex;
   justify-content: flex-end;
@@ -144,6 +153,7 @@ const forgetPassword = () => {
   transition:
     border 0.2s ease,
     box-shadow 0.2s ease;
+  padding: 8px;
 }
 
 /* INPUT (TEXT) */
@@ -174,7 +184,6 @@ const forgetPassword = () => {
   border: none;
   box-shadow: 0 4px 20px rgba(36, 75, 197, 0.4);
   transition: all 0.3s ease;
-  font-weight: 600;
   border-radius: 8px;
 }
 

@@ -244,7 +244,7 @@ defineExpose({ openForm })
   <component
     :is="mode === 'drawer' ? 'el-drawer' : 'el-dialog'"
     v-model="visible"
-    title="Add New Student"
+    title="Update Student Information"
     :size="mode === 'drawer' ? drawerSize : undefined"
     :width="mode === 'dialog' ? '600px' : undefined"
     :with-header="true"
@@ -310,7 +310,7 @@ defineExpose({ openForm })
             value="BSCS"
           />
           <el-option
-            label="Bachelor of Science in Information and Technology"
+            label="Bachelor of Science in Information Technology"
             value="BSIT"
           />
           <el-option label="Bachelor of Science in Tourism" value="BST" />
@@ -375,7 +375,7 @@ defineExpose({ openForm })
 
       <!-- Action Buttons -->
       <el-form-item>
-        <el-button type="primary" @click="submitForm">Add Student</el-button>
+        <el-button type="primary" @click="submitForm">Update</el-button>
         <el-button @click="closeForm">Cancel</el-button>
       </el-form-item>
     </el-form>

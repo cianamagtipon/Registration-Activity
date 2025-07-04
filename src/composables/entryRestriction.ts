@@ -13,13 +13,13 @@ export const entryRestriction = () => {
 
   // Allow only letters, space, period, apostrophe, and hyphen
   const onlyLetters = (event: KeyboardEvent) => {
-    if (!/[a-zA-Z\s.'-]/.test(event.key)) {
+    if (!/[a-zA-ZñÑ\s.'-]/.test(event.key)) {
       event.preventDefault()
     }
   }
 
   const onlyAlphaNumeric = (event: KeyboardEvent) => {
-    if (!/[0-9a-zA-Z\s.'-]/.test(event.key)) {
+    if (!/[0-9a-zA-ZñÑ\s.'-]/.test(event.key)) {
       event.preventDefault()
     }
   }
@@ -96,6 +96,7 @@ export const entryRestriction = () => {
   }
 
   // Check if input is invalid: only spaces or contains emoji
+  // NOTE FOR LATER: TRY TO CHECK OTHER SPECIAL CHARACTERS
   const isInvalidInput = (input: string): boolean => {
     return isOnlySpaces(input) || removeEmojis(input) !== input
   }

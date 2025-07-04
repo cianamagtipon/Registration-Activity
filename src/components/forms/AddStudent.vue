@@ -283,7 +283,7 @@ onMounted(() => {
             value="BSCS"
           />
           <el-option
-            label="Bachelor of Science in Information and Technology"
+            label="Bachelor of Science in Information Technology"
             value="BSIT"
           />
           <el-option label="Bachelor of Science in Tourism" value="BST" />
