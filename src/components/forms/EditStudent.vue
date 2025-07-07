@@ -4,7 +4,7 @@ TheMasterlist.vue.*/
 <!---------- SCRIPTS ---------->
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onBeforeUnmount, watch } from 'vue'
 import { ElMessage, FormInstance } from 'element-plus'
 
 import { getAge } from '@/composables/getAge'
@@ -60,7 +60,9 @@ const validateZipCode = (
   value: string,
   callback: (error?: string | Error) => void,
 ) => {
-  if (!/^[1-9][0-9]{3}$/.test(value)) {
+  if (!value) {
+    callback() // allow empty string
+  } else if (!/^[1-9][0-9]{3}$/.test(value)) {
     callback(
       new Error('Must be 4 digits, numerical, and does not start with 0.'),
     )
@@ -130,10 +132,6 @@ const rules = {
   ],
   birthday: [{ required: true, message: 'Select a date', trigger: 'change' }],
   course: [{ required: true, message: 'Required', trigger: 'change' }],
-  'address.street': [
-    { required: true, message: 'Required', trigger: 'blur' },
-    { validator: validateEntry, trigger: 'blur' },
-  ],
   'address.city': [
     { required: true, message: 'Required', trigger: 'blur' },
     { validator: validateEntry, trigger: 'blur' },
@@ -142,10 +140,7 @@ const rules = {
     { required: true, message: 'Required', trigger: 'blur' },
     { validator: validateEntry, trigger: 'blur' },
   ],
-  'address.zipCode': [
-    { required: true, message: 'Required', trigger: 'blur' },
-    { validator: validateZipCode, trigger: 'blur' },
-  ],
+  'address.zipCode': [{ validator: validateZipCode, trigger: 'blur' }],
 }
 
 // Drawer/dialog mode support
@@ -162,12 +157,27 @@ function getDrawerSize() {
   return window.innerWidth <= 768 ? '100%' : '40%'
 }
 
-onMounted(() => {
-  window.addEventListener('resize', () => {
-    if (mode.value === 'drawer') {
-      drawerSize.value = getDrawerSize()
-    }
-  })
+// Handle Enter key to submit
+const handleKeyPress = (e: KeyboardEvent) => {
+  const isTextarea = (e.target as HTMLElement)?.tagName === 'TEXTAREA'
+  if (e.key === 'Enter' && !isTextarea && visible.value) {
+    e.preventDefault()
+    submitForm()
+  }
+}
+
+// Watch drawer visibility and bind/unbind listener
+watch(visible, (val) => {
+  if (val) {
+    window.addEventListener('keydown', handleKeyPress)
+  } else {
+    window.removeEventListener('keydown', handleKeyPress)
+  }
+})
+
+// Cleanup on component unmount
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyPress)
 })
 
 // Emit updated student object to parent
@@ -203,7 +213,8 @@ const closeForm = () => {
 const submitForm = async () => {
   if (!formRef.value) return
 
-  await formRef.value.validate((valid: boolean) => {
+  try {
+    const valid = await formRef.value.validate()
     if (valid) {
       const updatedStudent: Student = {
         id: form.id,
@@ -225,13 +236,13 @@ const submitForm = async () => {
 
       emit('student-updated', updatedStudent)
       ElMessage.closeAll()
-      ElMessage.success('Student updated!')
       closeForm()
-    } else {
-      ElMessage.closeAll()
-      ElMessage.error('Validation failed.')
+      ElMessage.success('Student updated!')
     }
-  })
+  } catch (error) {
+    ElMessage.closeAll()
+    ElMessage.error('Validation failed.')
+  }
 }
 
 // Expose openForm to parent
@@ -256,7 +267,7 @@ defineExpose({ openForm })
       <el-form-item label="First Name" prop="firstName">
         <el-input
           v-model="form.firstName"
-          maxlength="50"
+          maxlength="40"
           @keypress="onlyLetters"
           @keydown="(e) => onlyOneSpace(e, form.firstName)"
           @paste="preventPaste"
@@ -278,7 +289,7 @@ defineExpose({ openForm })
       <el-form-item label="Last Name" prop="lastName">
         <el-input
           v-model="form.lastName"
-          maxlength="50"
+          maxlength="30"
           @keypress="onlyLetters"
           @keydown="(e) => onlyOneSpace(e, form.lastName)"
           @paste="preventPaste"
@@ -326,7 +337,7 @@ defineExpose({ openForm })
       <el-form-item label="Street" prop="address.street">
         <el-input
           v-model="form.address.street"
-          maxlength="250"
+          maxlength="50"
           @keypress="onlyAlphaNumeric"
           @keydown="(e) => onlyOneSpace(e, form.address.street)"
           @paste="preventPaste"
@@ -341,7 +352,7 @@ defineExpose({ openForm })
       <el-form-item label="City" prop="address.city">
         <el-input
           v-model="form.address.city"
-          maxlength="250"
+          maxlength="50"
           @keypress="onlyLetters"
           @keydown="(e) => onlyOneSpace(e, form.address.city)"
           @paste="preventPaste"
@@ -352,7 +363,7 @@ defineExpose({ openForm })
       <el-form-item label="Province" prop="address.province">
         <el-input
           v-model="form.address.province"
-          maxlength="250"
+          maxlength="50"
           @keypress="onlyLetters"
           @keydown="(e) => onlyOneSpace(e, form.address.province)"
           @paste="preventPaste"

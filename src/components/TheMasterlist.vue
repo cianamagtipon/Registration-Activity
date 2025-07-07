@@ -168,8 +168,17 @@ onMounted(() => {
       <el-table-column prop="age" label="Age" min-width="90" align="center" />
       <el-table-column prop="address" label="Address" min-width="250">
         <template #default="scope">
-          {{ scope.row.address.street }}, {{ scope.row.address.city }},
-          {{ scope.row.address.province }}. {{ scope.row.address.zipCode }}.
+          {{
+            [
+              scope.row.address.street,
+              scope.row.address.city,
+              scope.row.address.province,
+            ]
+              .filter(Boolean)
+              .join(', ')
+          }}<template v-if="scope.row.address.zipCode"
+            >. {{ scope.row.address.zipCode }}</template
+          >.
         </template>
       </el-table-column>
       <el-table-column label="Course" min-width="250">

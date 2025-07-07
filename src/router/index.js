@@ -39,12 +39,7 @@ const router = createRouter({
       beforeEnter: (to, from, next) => {
         const userStore = useUserStore()
         const { isLoggedIn } = storeToRefs(userStore)
-
-        if (isLoggedIn.value) {
-          next({ name: 'error' })
-        } else {
-          next({ name: 'error' })
-        }
+        next({ name: 'error' })
       },
     },
   ],
