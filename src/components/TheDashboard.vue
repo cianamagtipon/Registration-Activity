@@ -624,7 +624,6 @@ onUnmounted(() => {
 
   .student-name {
     font-size: 14px;
-    font-size: 14px;
     line-height: 1.2;
     word-break: break-word;
     white-space: normal;
