@@ -6,7 +6,7 @@
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search } from '@element-plus/icons-vue'
+import { Search, Edit, Delete } from '@element-plus/icons-vue'
 
 import { useStudentStore } from '@/stores/student'
 import type { Student } from '@/stores/student'
@@ -182,7 +182,7 @@ onMounted(() => {
       <el-table-column
         fixed="right"
         label="Operations"
-        min-width="150"
+        min-width="100"
         align="center"
       >
         <template #default="scope">
@@ -193,7 +193,7 @@ onMounted(() => {
             size="medium"
             @click="editStudentRef.openForm(scope.row)"
           >
-            Edit
+            <el-icon><Edit /></el-icon>
           </el-button>
           <el-button
             class="remove-button"
@@ -202,7 +202,7 @@ onMounted(() => {
             size="medium"
             @click.prevent="deleteRow(scope.row.id)"
           >
-            Remove
+            <el-icon class="delete-icon"><Delete /></el-icon>
           </el-button>
         </template>
       </el-table-column>
@@ -281,6 +281,14 @@ onMounted(() => {
 .add-button {
   white-space: nowrap;
   align-self: flex-end;
+  color: white;
+  background: linear-gradient(
+    to right,
+    #244bc5 0%,
+    #00b1b1 45%,
+    #00b1b1 55%,
+    #244bc5 100%
+  );
 }
 
 /* ===== FILTER ELEMENTS ===== */
@@ -305,6 +313,10 @@ onMounted(() => {
     0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
+.delete-icon {
+  color: #ff2200af;
+}
+
 /* ────────────────────────
   OVERRIDES
  ──────────────────────── */
@@ -327,6 +339,13 @@ onMounted(() => {
   transition: all 0.3s ease;
   height: 38px;
   padding: 0 11px;
+}
+
+.add-button :deep(span) {
+  color: white;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  filter: drop-shadow(0 0 4px #244bc5);
 }
 
 /* ALL BUTTONS THAT ARE NOT EDIT AND REMOVE */
