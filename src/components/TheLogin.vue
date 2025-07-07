@@ -167,6 +167,13 @@ const forgetPassword = () => {
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
+/* INPUT (AUTOFILL) */
+::v-deep(input:-webkit-autofill) {
+  box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: white !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 /* ICON */
 ::v-deep(.el-icon) {
   color: white !important;
