@@ -1,4 +1,5 @@
-/*BASIC DESCRIPTION: These are the main components of the dashboard.*/
+can you check? /*BASIC DESCRIPTION: These are the main components of the
+dashboard.*/
 
 <!---------- SCRIPTS ---------->
 
@@ -165,12 +166,14 @@ onUnmounted(() => {
               <template #header>
                 <div class="card-header">
                   <span class="avatar-name">
-                    <el-avatar class="large-avatar">
-                      {{
-                        student.firstName.charAt(0).toUpperCase() +
-                        student.lastName.charAt(0).toUpperCase()
-                      }}
-                    </el-avatar>
+                    <span class="student-avatar">
+                      <el-avatar class="avatar">
+                        {{
+                          student.firstName.charAt(0).toUpperCase() +
+                          student.lastName.charAt(0).toUpperCase()
+                        }}
+                      </el-avatar>
+                    </span>
                     <strong class="student-name">
                       {{ student.firstName }} {{ student.middleInitial }}
                       {{ student.lastName }}
@@ -178,8 +181,11 @@ onUnmounted(() => {
                   </span>
                 </div>
               </template>
-              <p class="card-text">Age: {{ student.age }}</p>
-              <p class="card-text">Course: {{ student.course }}</p>
+
+              <div class="card-details">
+                <p class="card-text">Age: {{ student.age }}</p>
+                <p class="card-text">Course: {{ student.course }}</p>
+              </div>
             </el-card>
           </el-carousel-item>
         </el-carousel>
@@ -230,16 +236,18 @@ onUnmounted(() => {
           >
             <template #header>
               <div class="card-header">
-                <el-avatar>
-                  {{
-                    student.firstName.charAt(0).toUpperCase() +
-                    student.lastName.charAt(0).toUpperCase()
-                  }}
-                </el-avatar>
-                <strong>
-                  {{ student.firstName }} {{ student.middleInitial }}
-                  {{ student.lastName }}
-                </strong>
+                <span class="avatar-name">
+                  <el-avatar class="avatar">
+                    {{
+                      student.firstName.charAt(0).toUpperCase() +
+                      student.lastName.charAt(0).toUpperCase()
+                    }}
+                  </el-avatar>
+                  <strong class="student-name">
+                    {{ student.firstName }} {{ student.middleInitial }}
+                    {{ student.lastName }}
+                  </strong>
+                </span>
               </div>
             </template>
             <p class="card-text">Age: {{ student.age }}</p>
@@ -335,16 +343,20 @@ onUnmounted(() => {
 .avatar-name {
   display: flex;
   align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
 }
 
-.large-avatar {
+.avatar {
   width: 48px;
   height: 48px;
   font-size: 20px;
 }
 
 .student-name {
-  font-size: 20px;
+  font-size: 18px;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 .icon-container {
@@ -352,11 +364,15 @@ onUnmounted(() => {
 }
 
 .card-text {
-  margin: 6px 0;
   font-size: 15px;
 }
 
 .carousel-card {
+  container-type: inline-size;
+  container-name: card;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   height: 90%;
   background: white;
   border-radius: 8px;
@@ -366,6 +382,19 @@ onUnmounted(() => {
   transition:
     box-shadow 0.3s ease,
     transform 0.15s ease;
+}
+
+.card-header {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-start;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .carousel-card:hover {
@@ -405,7 +434,7 @@ onUnmounted(() => {
 .card-filters {
   margin: 10px;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
   align-items: center;
 }
@@ -521,13 +550,6 @@ onUnmounted(() => {
   .student-name {
     font-size: 15px;
   }
-
-  .large-avatar {
-    width: 30px;
-    height: 30px;
-    font-size: 15px;
-    padding: 10px;
-  }
 }
 
 @media (max-width: 768px) {
@@ -592,8 +614,63 @@ onUnmounted(() => {
 }
 
 @media (max-width: 400px) {
+  .el-avatar {
+    margin-right: 5px;
+  }
+
+  .avatar-name {
+    gap: 5px;
+  }
+
+  .student-name {
+    font-size: 14px;
+    font-size: 14px;
+    line-height: 1.2;
+    word-break: break-word;
+    white-space: normal;
+  }
+
+  .card-text {
+    font-size: 14px;
+    margin: 5px;
+  }
+
   .clock-display {
     font-size: 1.5rem;
+  }
+}
+
+@container card (max-width: 300px) {
+  .carousel-card {
+    min-height: auto;
+  }
+
+  .el-avatar {
+    margin-right: 5px;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+    min-width: 28px;
+    min-height: 28px;
+  }
+
+  .avatar-name {
+    gap: 5px;
+  }
+
+  .student-name {
+    font-size: 14px;
+    line-height: 1.2;
+    word-break: break-word;
+    white-space: normal;
+  }
+
+  .card-text {
+    font-size: 14px;
+    margin: 5px;
   }
 }
 </style>
