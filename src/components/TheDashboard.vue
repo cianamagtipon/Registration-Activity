@@ -546,10 +546,6 @@ onUnmounted(() => {
   .icon-container {
     display: none;
   }
-
-  .student-name {
-    font-size: 15px;
-  }
 }
 
 @media (max-width: 768px) {
