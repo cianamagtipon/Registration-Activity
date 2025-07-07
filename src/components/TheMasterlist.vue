@@ -217,8 +217,30 @@ onMounted(() => {
   </div>
 
   <!-- DRAWERS -->
-  <EditStudent ref="editStudentRef" @student-updated="handleStudentUpdated" />
-  <AddStudent ref="addStudentRef" @student-added="handleStudentAdded" />
+  <EditStudent
+    ref="editStudentRef"
+    :existing-students="
+      students.map((s) => ({
+        firstName: s.firstName,
+        middleInitial: s.middleInitial,
+        lastName: s.lastName,
+        birthday: s.birthDate.toISOString().split('T')[0], // string in 'YYYY-MM-DD'
+      }))
+    "
+    @student-updated="handleStudentUpdated"
+  />
+  <AddStudent
+    ref="addStudentRef"
+    :existing-students="
+      students.map((s) => ({
+        firstName: s.firstName,
+        middleInitial: s.middleInitial,
+        lastName: s.lastName,
+        birthday: s.birthDate.toISOString().split('T')[0],
+      }))
+    "
+    @student-added="handleStudentAdded"
+  />
 </template>
 
 <!---------- STYLES ---------->

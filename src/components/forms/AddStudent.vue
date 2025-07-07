@@ -32,9 +32,39 @@ const { calculateAge } = getAge()
 // Props and mode setup (defaults to drawer)
 const props = defineProps<{
   mode?: 'drawer' | 'dialog'
+  existingStudents: Array<{
+    firstName: string
+    middleInitial?: string
+    lastName: string
+    birthday: string
+  }>
 }>()
 
 const mode = computed(() => props.mode ?? 'drawer')
+
+const isDuplicateEntry = () => {
+  const normalize = (val: string) => toTitleCase(val.trim())
+  const normalizeInitial = (val: string) => formatMiddleInitial(val.trim())
+
+  const newFirst = normalize(form.firstName)
+  const newMiddle = normalizeInitial(form.middleInitial || '')
+  const newLast = normalize(form.lastName)
+  const newBday = new Date(form.birthday).toISOString().split('T')[0] // "YYYY-MM-DD"
+
+  return props.existingStudents.some((student) => {
+    const studentFirst = normalize(student.firstName)
+    const studentMiddle = normalizeInitial(student.middleInitial || '')
+    const studentLast = normalize(student.lastName)
+    const studentBday = new Date(student.birthday).toISOString().split('T')[0]
+
+    return (
+      studentFirst === newFirst &&
+      studentMiddle === newMiddle &&
+      studentLast === newLast &&
+      studentBday === newBday
+    )
+  })
+}
 
 // Visibility state and form reference
 const visible = ref(false)
@@ -162,9 +192,15 @@ const resetForm = () => {
 const submitForm = async () => {
   if (!formRef.value) return
 
-  // Keeping format in case user doesn't blur field before submission
   try {
     await formRef.value.validate()
+
+    if (isDuplicateEntry()) {
+      ElMessage.closeAll()
+      ElMessage.error('Duplicate entry: This student already exists.')
+      return
+    }
+
     emit('student-added', {
       firstName: toTitleCase(form.firstName),
       middleInitial: form.middleInitial
@@ -180,6 +216,7 @@ const submitForm = async () => {
         zipCode: form.address.zipCode,
       },
     })
+
     closeForm()
   } catch (error) {
     ElMessage.closeAll()

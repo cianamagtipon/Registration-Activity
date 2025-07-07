@@ -146,9 +146,39 @@ const rules = {
 // Drawer/dialog mode support
 const props = defineProps<{
   mode?: 'drawer' | 'dialog'
+  existingStudents: Array<{
+    firstName: string
+    middleInitial?: string
+    lastName: string
+    birthday: string
+  }>
 }>()
 
 const mode = computed(() => props.mode ?? 'drawer')
+
+const isDuplicateEntry = () => {
+  const normalize = (val: string) => toTitleCase(val.trim())
+  const normalizeInitial = (val: string) => formatMiddleInitial(val.trim())
+
+  const newFirst = normalize(form.firstName)
+  const newMiddle = normalizeInitial(form.middleInitial || '')
+  const newLast = normalize(form.lastName)
+  const newBday = new Date(form.birthday).toISOString().split('T')[0] // "YYYY-MM-DD"
+
+  return props.existingStudents.some((student) => {
+    const studentFirst = normalize(student.firstName)
+    const studentMiddle = normalizeInitial(student.middleInitial || '')
+    const studentLast = normalize(student.lastName)
+    const studentBday = new Date(student.birthday).toISOString().split('T')[0]
+
+    return (
+      studentFirst === newFirst &&
+      studentMiddle === newMiddle &&
+      studentLast === newLast &&
+      studentBday === newBday
+    )
+  })
+}
 
 // Responsive drawer width
 const drawerSize = ref(getDrawerSize())
@@ -186,21 +216,23 @@ const emit = defineEmits<{
 }>()
 
 // Populate form with selected student's data
-const openForm = (student: Student) => {
-  form.id = student.id
-  form.firstName = toTitleCase(student.firstName)
-  form.middleInitial = student.middleInitial
-    ? formatMiddleInitial(student.middleInitial)
-    : ''
-  form.lastName = toTitleCase(student.lastName)
-  form.birthday = student.birthDate.toISOString().split('T')[0]
-  form.course = student.course
-  form.address.street = toTitleCase(abbreviateStreet(student.address.street))
-  form.address.city = toTitleCase(student.address.city)
-  form.address.province = toTitleCase(student.address.province)
-  form.address.zipCode = String(student.address.zipCode)
+const editingStudent = ref<Student | null>(null)
 
+const openForm = (student: Student) => {
   visible.value = true
+  editingStudent.value = student
+
+  form.firstName = student.firstName
+  form.middleInitial = student.middleInitial || ''
+  form.lastName = student.lastName
+  form.birthday = student.birthDate.toISOString().substring(0, 10)
+  form.course = student.course
+  form.address = {
+    street: student.address.street,
+    city: student.address.city,
+    province: student.address.province,
+    zipCode: student.address.zipCode.toString(),
+  }
 }
 
 // Reset form and close modal
@@ -214,34 +246,36 @@ const submitForm = async () => {
   if (!formRef.value) return
 
   try {
-    const valid = await formRef.value.validate()
-    if (valid) {
-      const updatedStudent: Student = {
-        id: form.id,
-        firstName: toTitleCase(form.firstName),
-        middleInitial: form.middleInitial
-          ? formatMiddleInitial(form.middleInitial)
-          : '',
-        lastName: toTitleCase(form.lastName),
-        birthDate: new Date(form.birthday),
-        age: 0,
-        course: form.course,
-        address: {
-          street: toTitleCase(form.address.street),
-          city: toTitleCase(form.address.city),
-          province: toTitleCase(form.address.province),
-          zipCode: Number(form.address.zipCode),
-        },
-      }
+    await formRef.value.validate()
 
-      emit('student-updated', updatedStudent)
+    if (isDuplicateEntry()) {
       ElMessage.closeAll()
-      closeForm()
-      ElMessage.success('Student updated!')
+      ElMessage.error('Duplicate entry: This student already exists.')
+      return
     }
+
+    emit('student-updated', {
+      id: editingStudent.value!.id,
+      firstName: toTitleCase(form.firstName),
+      middleInitial: form.middleInitial
+        ? formatMiddleInitial(form.middleInitial)
+        : '',
+      lastName: toTitleCase(form.lastName),
+      birthDate: new Date(form.birthday),
+      age: calculateAge(new Date(form.birthday)),
+      course: form.course,
+      address: {
+        street: toTitleCase(abbreviateStreet(form.address.street)),
+        city: toTitleCase(form.address.city),
+        province: toTitleCase(form.address.province),
+        zipCode: form.address.zipCode ? Number(form.address.zipCode) : 0,
+      },
+    })
+
+    closeForm()
   } catch (error) {
     ElMessage.closeAll()
-    ElMessage.error('Validation failed.')
+    ElMessage.error('Please fill all required fields')
   }
 }
 
