@@ -340,6 +340,7 @@ defineExpose({ openForm })
           :disabled-date="tooYoung"
           :default-value="defaultDate"
           style="width: 100%"
+          :editable="false"
         />
       </el-form-item>
 
