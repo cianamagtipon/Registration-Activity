@@ -217,6 +217,7 @@ const emit = defineEmits<{
 
 // Populate form with selected student's data
 const editingStudent = ref<Student | null>(null)
+const originalStudent = ref<EditStudentForm | null>(null)
 
 const openForm = (student: Student) => {
   visible.value = true
@@ -233,6 +234,12 @@ const openForm = (student: Student) => {
     province: student.address.province,
     zipCode: student.address.zipCode.toString(),
   }
+
+  originalStudent.value = JSON.parse(JSON.stringify(form))
+}
+
+const isFormUnchanged = () => {
+  return JSON.stringify(form) === JSON.stringify(originalStudent.value)
 }
 
 // Reset form and close modal
@@ -248,7 +255,7 @@ const submitForm = async () => {
   try {
     await formRef.value.validate()
 
-    if (isDuplicateEntry()) {
+    if (!isFormUnchanged() && isDuplicateEntry()) {
       ElMessage.closeAll()
       ElMessage.error('Duplicate entry: This student already exists.')
       return
