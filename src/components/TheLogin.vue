@@ -3,10 +3,10 @@
 <!---------- SCRIPTS ---------->
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { User, Lock } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 
@@ -43,6 +43,38 @@ const login = () => {
   }, 1500)
 }
 
+const loginFormRef = ref<FormInstance | null>(null)
+
+const rules: FormRules = {
+  username: [
+    { required: true, message: 'Username is required', trigger: 'blur' },
+  ],
+  password: [
+    { required: true, message: 'Password is required', trigger: 'blur' },
+  ],
+}
+
+const submitLogin = async () => {
+  if (!loginFormRef.value) return
+
+  await loginFormRef.value.validate((valid) => {
+    if (!valid) return
+
+    fullscreenLoading.value = true
+    setTimeout(() => {
+      const success = userStore.login(username.value, password.value)
+      fullscreenLoading.value = false
+
+      if (success) {
+        router.push('/dashboard')
+      } else {
+        ElMessage.closeAll()
+        ElMessage.error('Invalid username or password')
+      }
+    }, 1500)
+  })
+}
+
 const forgetPassword = () => {
   userStore.setUsername(username.value)
   const result = userStore.handleForgetPassword()
@@ -75,32 +107,64 @@ const forgetPassword = () => {
       break
   }
 }
+
+const handleKeydown = (e: KeyboardEvent) => {
+  const tag = (e.target as HTMLElement).tagName
+  if (e.key === 'Enter' && !['INPUT', 'TEXTAREA', 'BUTTON'].includes(tag)) {
+    submitLogin()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
 </script>
 
 <!---------- TEMPLATES ---------->
 
 <template>
   <div class="login-container">
-    <form class="login" @submit.prevent="login">
-      <el-input
-        v-model="username"
-        class="username"
-        placeholder="Username"
-        style="margin-bottom: 16px"
-        :prefix-icon="User"
-      />
-      <el-input
-        v-model="password"
-        class="password"
-        placeholder="Password"
-        style="margin-bottom: 30px"
-        :prefix-icon="Lock"
-        show-password
-      />
-      <el-button type="primary" class="login-button" native-type="submit">
-        Login
-      </el-button>
-    </form>
+    <el-form
+      class="login"
+      :model="{ username, password }"
+      :rules="rules"
+      ref="loginFormRef"
+      @submit.prevent="submitLogin"
+    >
+      <el-form-item prop="username">
+        <el-input
+          v-model="username"
+          class="username"
+          placeholder="Username"
+          style="margin-bottom: 5px"
+          :prefix-icon="User"
+        />
+      </el-form-item>
+      <el-form-item prop="password">
+        <el-input
+          v-model="password"
+          class="password"
+          placeholder="Password"
+          style="margin-top: 11px; margin-bottom: 5px"
+          :prefix-icon="Lock"
+          show-password
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          class="login-button"
+          style="margin-top: 25px"
+          native-type="submit"
+        >
+          Login
+        </el-button>
+      </el-form-item>
+    </el-form>
 
     <div class="forgot-password">
       <el-link type="info" @click="forgetPassword">Forgot Password?</el-link>
