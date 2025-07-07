@@ -69,20 +69,13 @@ const deleteRow = (id) => {
       cancelButtonText: 'Cancel',
       type: 'warning',
     },
-  )
-    .then(() => {
-      studentStore.removeStudent(id)
-      ElMessage({
-        type: 'success',
-        message: 'Delete completed',
-      })
+  ).then(() => {
+    studentStore.removeStudent(id)
+    ElMessage({
+      type: 'success',
+      message: 'Delete completed',
     })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: 'Delete canceled',
-      })
-    })
+  })
 }
 
 onMounted(() => {

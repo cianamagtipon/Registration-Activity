@@ -55,6 +55,22 @@ const validateEntry = (
   }
 }
 
+const validateStreet = (
+  _: any,
+  value: string,
+  callback: (error?: Error) => void,
+) => {
+  const trimmed = value.trim()
+
+  if (!trimmed) {
+    callback()
+  } else if (/^\d+$/.test(trimmed)) {
+    callback(new Error('Street cannot be only numbers.'))
+  } else {
+    callback()
+  }
+}
+
 const validateZipCode = (
   rule: any,
   value: string,
@@ -132,6 +148,7 @@ const rules = {
   ],
   birthday: [{ required: true, message: 'Select a date', trigger: 'change' }],
   course: [{ required: true, message: 'Required', trigger: 'change' }],
+  'address.street': [{ validator: validateStreet, trigger: 'blur' }],
   'address.city': [
     { required: true, message: 'Required', trigger: 'blur' },
     { validator: validateEntry, trigger: 'blur' },
@@ -303,7 +320,13 @@ defineExpose({ openForm })
     :custom-class="mode === 'drawer' ? 'student-drawer' : 'student-dialog'"
     :destroy-on-close="true"
   >
-    <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
+    <el-form
+      :model="form"
+      :rules="rules"
+      ref="formRef"
+      label-width="120px"
+      style="display: flex; flex-direction: column; gap: 10px"
+    >
       <!-- Basic Info -->
       <el-form-item label="First Name" prop="firstName">
         <el-input
