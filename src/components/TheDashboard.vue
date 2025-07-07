@@ -258,8 +258,10 @@ onUnmounted(() => {
         </div>
 
         <!-- Calendar -->
-        <div class="calendar">
-          <el-calendar v-model="value" />
+        <div class="calendar-container">
+          <div class="calendar">
+            <el-calendar v-model="value" />
+          </div>
         </div>
       </div>
     </div>
@@ -447,6 +449,19 @@ onUnmounted(() => {
   letter-spacing: 2px;
 }
 
+/* ===== CALENDAR ===== */
+
+.calendar-container {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow:
+    0 0 15px rgba(100, 150, 255, 0.2),
+    0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
 .calendar {
   margin-top: 30px;
   grid-column-start: 2;
@@ -539,6 +554,40 @@ onUnmounted(() => {
 
   .infinite-list {
     max-height: 550px;
+  }
+
+  .calendar-container {
+    margin-top: 30px;
+  }
+
+  .calendar {
+    margin-top: 10px;
+  }
+
+  ::v-deep(.el-calendar) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  ::v-deep(.el-calendar-table td) {
+    padding: 2px !important;
+  }
+
+  ::v-deep(.el-calendar-day) {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 10px;
+    height: 100%;
+  }
+
+  ::v-deep(.el-calendar__header) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 }
 
