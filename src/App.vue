@@ -2,7 +2,7 @@
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { Setting } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { useStudentStore } from '@/stores/student'
 import { storeToRefs } from 'pinia'
@@ -55,17 +55,41 @@ const handleCommand = (command: string) => {
   ElMessage.closeAll()
 
   if (command === 'logout') {
-    fullscreenLoading.value = true
-    setTimeout(() => {
-      router.push({ name: 'login' })
-      userStore.logout()
-      studentStore.resetStudents()
-      fullscreenLoading.value = false
-    }, 1500)
+    ElMessageBox.confirm('Log out of your account?', {
+      confirmButtonText: 'LOG OUT',
+      cancelButtonText: 'Cancel',
+    }).then(() => {
+      ElMessage({
+        type: 'success',
+        message: 'Logout successful',
+      })
+
+      fullscreenLoading.value = true
+      setTimeout(() => {
+        router.push({ name: 'login' })
+        userStore.logout()
+        studentStore.resetStudents()
+        fullscreenLoading.value = false
+      }, 1500)
+    })
   } else if (command === 'reset') {
-    studentStore.resetStudents()
-    userStore.resetForgetClickCount()
-    ElMessage.info('All data has been reset to default')
+    ElMessageBox.confirm(
+      'This will reset your entire database. Proceed?',
+      'Warning',
+      {
+        confirmButtonText: 'YES',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      },
+    ).then(() => {
+      ElMessage({
+        type: 'success',
+        message: 'All data has been reset to default',
+      })
+
+      studentStore.resetStudents()
+      userStore.resetForgetClickCount()
+    })
   } else {
     ElMessage(`Clicked item: ${command}`)
   }
@@ -90,6 +114,8 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateScreenSize)
 })
 </script>
+
+<!---------- TEMPLATES ---------->
 
 <template>
   <div v-loading.fullscreen.lock="fullscreenLoading">
@@ -142,6 +168,8 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
+<!---------- STYLES ---------->
 
 <style scoped>
 .table-header {

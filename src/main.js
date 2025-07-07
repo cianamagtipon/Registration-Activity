@@ -19,4 +19,22 @@ app.use(router)
 app.use(pinia)
 app.use(ElementPlus)
 
+// Disable enter key on open element plus message boxes
+function disableEnter(e) {
+  if (e.key !== 'Enter') return // only care about enter
+
+  const box = document.querySelector('.el-message-box') // the real dialog
+  const visible = box && getComputedStyle(box).display !== 'none'
+
+  if (visible) {
+    e.preventDefault()
+    e.stopImmediatePropagation() // stop EVERY further handler
+  }
+}
+
+// Capture phase guarantees we run before element plus
+;['keydown', 'keyup'].forEach((type) =>
+  window.addEventListener(type, disableEnter, true),
+)
+
 app.mount('#app')
