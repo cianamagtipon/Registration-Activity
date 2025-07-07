@@ -184,7 +184,6 @@ const forgetPassword = () => {
   border: none;
   box-shadow: 0 4px 20px rgba(36, 75, 197, 0.4);
   transition: all 0.3s ease;
-  border-radius: 8px;
 }
 
 /* BUTTON HOVER */
