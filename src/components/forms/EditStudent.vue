@@ -87,24 +87,6 @@ const validateZipCode = (
   }
 }
 
-// Add input event helpers
-const inputEvents = (
-  field: string,
-  type: 'letters' | 'digits' | 'initial' = 'letters',
-) => {
-  const keypress = {
-    letters: onlyLetters,
-    digits: (e: KeyboardEvent) => onlyDigits(e, field),
-    initial: onlyMiddleInitial,
-  }[type]
-
-  return {
-    onKeypress: keypress,
-    onKeydown: (e: KeyboardEvent) => onlyOneSpace(e, field),
-    onPaste: preventPaste,
-  }
-}
-
 // Reactive form state
 interface EditStudentForm {
   id: string
@@ -164,6 +146,7 @@ const rules = {
 const props = defineProps<{
   mode?: 'drawer' | 'dialog'
   existingStudents: Array<{
+    id: string
     firstName: string
     middleInitial?: string
     lastName: string
@@ -188,12 +171,16 @@ const isDuplicateEntry = () => {
     const studentLast = normalize(student.lastName)
     const studentBday = new Date(student.birthday).toISOString().split('T')[0]
 
-    return (
+    const isSameIdentity =
       studentFirst === newFirst &&
       studentMiddle === newMiddle &&
       studentLast === newLast &&
       studentBday === newBday
-    )
+
+    const isSameId = editingStudent.value?.id === student.id
+
+    // It's a duplicate only if it's the same identity but a different ID
+    return isSameIdentity && !isSameId
   })
 }
 

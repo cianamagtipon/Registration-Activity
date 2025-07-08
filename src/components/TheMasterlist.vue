@@ -214,6 +214,7 @@ onMounted(() => {
     ref="editStudentRef"
     :existing-students="
       students.map((s) => ({
+        id: s.id,
         firstName: s.firstName,
         middleInitial: s.middleInitial,
         lastName: s.lastName,
