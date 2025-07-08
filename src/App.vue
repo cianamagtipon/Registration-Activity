@@ -234,7 +234,7 @@ onUnmounted(() => {
 }
 
 .main {
-  padding: 40px 2rem 0;
+  padding: 2rem;
   display: flex;
   justify-content: center;
 }
