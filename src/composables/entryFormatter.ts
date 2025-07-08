@@ -2,6 +2,7 @@ export const entryFormatter = () => {
   const toTitleCase = (value: string) => {
     return value
       .toLowerCase()
+      .trimEnd()
       .split(' ')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
