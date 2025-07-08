@@ -76,10 +76,7 @@ onUnmounted(() => {
 
       <!-- STUDENT DETAIL AND EMPTY STATE -->
       <transition name="fade-slide" mode="out-in">
-        <div
-          :key="selectedStudent?.id ?? 'no-student'"
-          class="description-container"
-        >
+        <div :key="selectedStudent?.id" class="description-container">
           <el-descriptions
             v-if="selectedStudent"
             :column="descriptionColumnCount"
@@ -420,7 +417,7 @@ onUnmounted(() => {
 
 .student-search {
   grid-row: span 2 / span 2;
-  padding: 30px;
+  padding: 30px 8px;
   border-radius: 12px;
   min-height: 700px;
   max-height: 700px;

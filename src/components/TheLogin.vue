@@ -140,7 +140,6 @@ onBeforeUnmount(() => {
           v-model="username"
           class="username"
           placeholder="Username"
-          style="margin-bottom: 5px"
           :prefix-icon="User"
         />
       </el-form-item>
@@ -149,7 +148,7 @@ onBeforeUnmount(() => {
           v-model="password"
           class="password"
           placeholder="Password"
-          style="margin-bottom: 5px"
+          style="margin-top: 5px"
           :prefix-icon="Lock"
           show-password
         />
