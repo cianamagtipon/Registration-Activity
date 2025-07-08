@@ -334,7 +334,7 @@ onUnmounted(() => {
 
 .el-avatar {
   margin-right: 10px;
-  background: linear-gradient(to right, #244bc5 0%, #00b1b1 60%);
+  background: linear-gradient(to right, #6b91ed 0%, #00b1b1 60%);
   color: white;
   font-weight: bold;
   border: none;

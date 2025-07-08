@@ -149,7 +149,7 @@ onBeforeUnmount(() => {
           v-model="password"
           class="password"
           placeholder="Password"
-          style="margin-top: 11px; margin-bottom: 5px"
+          style="margin-bottom: 5px"
           :prefix-icon="Lock"
           show-password
         />
@@ -158,7 +158,7 @@ onBeforeUnmount(() => {
         <el-button
           type="primary"
           class="login-button"
-          style="margin-top: 25px"
+          style="margin-top: 20px"
           native-type="submit"
         >
           Login

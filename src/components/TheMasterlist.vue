@@ -283,13 +283,7 @@ onMounted(() => {
   white-space: nowrap;
   align-self: flex-end;
   color: white;
-  background: linear-gradient(
-    to right,
-    #244bc5 0%,
-    #00b1b1 45%,
-    #00b1b1 55%,
-    #244bc5 100%
-  );
+  background: linear-gradient(to right, #6b91ed 0%, #00b1b1 60%);
 }
 
 /* ===== FILTER ELEMENTS ===== */
@@ -346,7 +340,7 @@ onMounted(() => {
   color: white;
   font-weight: 500;
   letter-spacing: 1.2px;
-  filter: drop-shadow(0 0 4px #244bc5);
+  filter: drop-shadow(0 0 4px #6b91ed);
 }
 
 /* ALL BUTTONS THAT ARE NOT EDIT AND REMOVE */

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { Menu } from '@element-plus/icons-vue'
+import { Menu, House, Collection } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { useStudentStore } from '@/stores/student'
@@ -85,13 +85,16 @@ const handleCommand = (command: string) => {
       userStore.logout()
       studentStore.resetStudents()
 
-      router.push({ name: 'login' }).then(() => {
-        fullscreenLoading.value = false
-        ElMessage({
-          type: 'success',
-          message: 'Logout successful',
+      // Delay the transition and unloading
+      setTimeout(() => {
+        router.push({ name: 'login' }).then(() => {
+          ElMessage({
+            type: 'success',
+            message: 'Logout successful',
+          })
+          fullscreenLoading.value = false
         })
-      })
+      }, 800)
     })
   } else if (command === 'reset') {
     ElMessageBox.confirm(
@@ -113,17 +116,6 @@ const handleCommand = (command: string) => {
     })
   } else {
     ElMessage(`Clicked item: ${command}`)
-  }
-}
-
-// Example: inside your login form handler
-const handleLogin = async () => {
-  fullscreenLoading.value = true
-  try {
-    await userStore.login(credentials)
-    router.push('/dashboard')
-  } finally {
-    fullscreenLoading.value = false
   }
 }
 
@@ -151,62 +143,77 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- Top Nav -->
-  <el-menu
-    v-if="!isMobile"
-    :default-active="activeIndex"
-    class="el-menu-demo"
-    mode="horizontal"
-    :ellipsis="false"
-    @select="handleSelect"
-  >
-    <el-menu-item index="1">Home</el-menu-item>
-    <el-menu-item index="2-1">Masterlist</el-menu-item>
-
-    <div class="menu-spacer"></div>
-    <el-sub-menu index="2">
-      <template #title>Menu</template>
-      <el-menu-item index="2-2">Reset</el-menu-item>
-      <el-menu-item index="2-3">Logout</el-menu-item>
-    </el-sub-menu>
-  </el-menu>
-
-  <!-- Mobile Menu Button -->
-  <div v-else class="mobile-header">
-    <el-button @click="toggleDrawer">
-      <el-icon><Menu /></el-icon>
-    </el-button>
-  </div>
-
-  <!-- Drawer for Mobile -->
-  <el-drawer
-    v-model="isDrawerVisible"
-    direction="ltr"
-    size="200px"
-    with-header="false"
-  >
+  <div v-loading.fullscreen.lock="fullscreenLoading">
+    <!-- Top Nav -->
     <el-menu
+      v-if="!isMobile"
       :default-active="activeIndex"
-      class="el-menu-vertical"
-      mode="vertical"
+      class="el-menu-demo"
+      mode="horizontal"
+      :ellipsis="false"
       @select="handleSelect"
     >
       <el-menu-item index="1">Home</el-menu-item>
       <el-menu-item index="2-1">Masterlist</el-menu-item>
-      <el-menu-item index="2-2">Reset</el-menu-item>
-      <el-menu-item index="2-3">Logout</el-menu-item>
-    </el-menu>
-  </el-drawer>
 
-  <div class="main">
-    <el-loading
-      v-if="fullscreenLoading"
-      fullscreen
-      lock
-      text="Loading..."
-      background="rgba(0, 0, 0, 0.5)"
-    />
-    <RouterView />
+      <div class="menu-spacer"></div>
+      <el-sub-menu index="2">
+        <template #title>Menu</template>
+        <el-menu-item index="2-2">Reset</el-menu-item>
+        <el-menu-item index="2-3">Logout</el-menu-item>
+      </el-sub-menu>
+    </el-menu>
+
+    <!-- Mobile Navbar -->
+    <div v-else class="navbar mobile-navbar">
+      <div class="logo-text" @click="handleSelect('1')">
+        Student Registration
+      </div>
+
+      <el-button @click="toggleDrawer" class="menu-button">
+        <el-icon><Menu /></el-icon>
+      </el-button>
+
+      <el-drawer
+        v-model="isDrawerVisible"
+        direction="ltr"
+        size="200px"
+        with-header="false"
+        :modal="true"
+      >
+        <div class="drawer-container">
+          <el-menu
+            :default-active="activeIndex"
+            class="el-menu-vertical nav-menu"
+            mode="vertical"
+            @select="handleSelect"
+          >
+            <el-menu-item index="1">
+              <el-icon><House /></el-icon>
+              Home
+            </el-menu-item>
+            <el-menu-item index="2-1">
+              <el-icon><Collection /></el-icon>
+              Masterlist
+            </el-menu-item>
+          </el-menu>
+
+          <el-menu
+            class="el-menu-vertical action-menu"
+            mode="vertical"
+            @select="handleSelect"
+          >
+            <el-menu-item index="2-2">Reset</el-menu-item>
+            <el-menu-item index="2-3" class="logout-item">Logout</el-menu-item>
+          </el-menu>
+        </div>
+      </el-drawer>
+    </div>
+
+    <!-- Content -->
+    <div class="main">
+      <RouterView />
+    </div>
   </div>
 </template>
 
@@ -216,18 +223,76 @@ onUnmounted(() => {
 }
 
 .main {
+  padding-left: 2rem;
+  padding-right: 2rem;
   padding-top: 30px;
   display: flex;
   justify-content: center;
 }
 
-.mobile-header {
-  display: flex;
-  justify-content: flex-end;
+.navbar.mobile-navbar {
   padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-button {
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+.navbar.mobile-navbar {
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logout-item {
+  color: #ff2200af !important;
+  font-weight: 600;
+}
+.logout-item:hover {
+  background-color: #fdecea !important;
+}
+
+/* Logo style */
+.logo-text {
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #6b91ed, #00b1b1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Optional: Adjust icon spacing */
+.menu-button {
+  margin-left: 1rem;
 }
 
 .el-menu-vertical {
   border: none !important;
+}
+
+.drawer-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.nav-menu {
+  flex-grow: 1;
+}
+
+.action-menu {
+  border-top: 1px solid #e4e7ed;
+  padding-top: 0.5rem;
 }
 </style>
