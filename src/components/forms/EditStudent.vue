@@ -65,7 +65,7 @@ const validateStreet = (
   if (!trimmed) {
     callback()
   } else if (/^\d+$/.test(trimmed)) {
-    callback(new Error('Street cannot be only numbers.'))
+    callback(new Error('Input cannot be only numbers.'))
   } else {
     callback()
   }
@@ -124,13 +124,17 @@ const rules = {
     { required: true, message: 'Required', trigger: 'blur' },
     { validator: validateEntry, trigger: 'blur' },
   ],
+  middleInitial: [{ validator: validateEntry, trigger: 'blur' }],
   lastName: [
     { required: true, message: 'Required', trigger: 'blur' },
     { validator: validateEntry, trigger: 'blur' },
   ],
   birthday: [{ required: true, message: 'Select a date', trigger: 'change' }],
   course: [{ required: true, message: 'Required', trigger: 'change' }],
-  'address.street': [{ validator: validateStreet, trigger: 'blur' }],
+  'address.street': [
+    { validator: validateEntry, trigger: 'blur' },
+    { validator: validateStreet, trigger: 'blur' },
+  ],
   'address.city': [
     { required: true, message: 'Required', trigger: 'blur' },
     { validator: validateEntry, trigger: 'blur' },
@@ -386,7 +390,7 @@ defineExpose({ openForm })
       </el-form-item>
 
       <!-- Address -->
-      <el-form-item label="Street" prop="address.street">
+      <el-form-item label="Unit/Street" prop="address.street">
         <el-input
           v-model="form.address.street"
           maxlength="50"
